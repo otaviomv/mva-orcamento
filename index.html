@@ -1,4 +1,22 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<title>MVA Geo - Orçamento</title>
+
+<style>
+*{
+    box-sizing:border-box;
+}
+
+body{
+    margin:0;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+    background:#f2f4f5;
+    color:#18201d;
+}
 
 header{
     background:#17231f;
@@ -22,7 +40,7 @@ header{
     max-width:700px;
     margin:auto;
     padding:14px;
-    padding-bottom:100px;
+    padding-bottom:110px;
 }
 
 .card{
@@ -45,7 +63,8 @@ label{
     margin:12px 0 6px;
 }
 
-input,select{
+input,
+select{
     width:100%;
     padding:13px 12px;
     border:1px solid #d5dada;
@@ -55,7 +74,8 @@ input,select{
     outline:none;
 }
 
-input:focus,select:focus{
+input:focus,
+select:focus{
     border-color:#25845a;
     box-shadow:0 0 0 2px rgba(37,132,90,.12);
 }
@@ -63,12 +83,6 @@ input:focus,select:focus{
 .grid{
     display:grid;
     grid-template-columns:1fr 1fr;
-    gap:10px;
-}
-
-.grid3{
-    display:grid;
-    grid-template-columns:1fr 1fr 1fr;
     gap:10px;
 }
 
@@ -80,9 +94,14 @@ input:focus,select:focus{
     font-size:14px;
 }
 
+.check label{
+    margin:0;
+}
+
 .check input{
     width:20px;
     height:20px;
+    flex-shrink:0;
 }
 
 .lote-box{
@@ -100,6 +119,13 @@ input:focus,select:focus{
     color:#176b43;
 }
 
+.info{
+    font-size:12px;
+    color:#68716e;
+    margin-top:6px;
+    line-height:1.4;
+}
+
 .resultado{
     background:#17231f;
     color:white;
@@ -107,6 +133,10 @@ input:focus,select:focus{
 
 .resultado h2{
     color:white;
+}
+
+.resultado .info{
+    color:#b8c4bf;
 }
 
 .big{
@@ -119,14 +149,19 @@ input:focus,select:focus{
 .linha{
     display:flex;
     justify-content:space-between;
+    align-items:center;
     gap:10px;
-    padding:7px 0;
+    padding:8px 0;
     border-bottom:1px solid rgba(255,255,255,.1);
     font-size:14px;
 }
 
 .linha:last-child{
     border-bottom:0;
+}
+
+.linha strong{
+    text-align:right;
 }
 
 .total{
@@ -189,17 +224,11 @@ input:focus,select:focus{
     border-radius:10px;
     padding:12px 17px;
     font-weight:800;
+    font-size:15px;
 }
 
 .oculto{
-    display:none;
-}
-
-.info{
-    font-size:12px;
-    color:#68716e;
-    margin-top:6px;
-    line-height:1.4;
+    display:none !important;
 }
 
 .verde{
@@ -207,10 +236,33 @@ input:focus,select:focus{
     font-weight:700;
 }
 
+.alerta{
+    color:#ffd27a;
+    font-weight:700;
+}
+
+.positivo{
+    color:#75d59e;
+}
+
+.negativo{
+    color:#ff8c8c;
+}
+
 @media(max-width:420px){
-    .grid3{
-        grid-template-columns:1fr 1fr;
+
+    .grid{
+        grid-template-columns:1fr;
     }
+
+    .big{
+        font-size:28px;
+    }
+
+    .linha{
+        font-size:13px;
+    }
+
 }
 </style>
 </head>
@@ -222,52 +274,847 @@ input:focus,select:focus{
     <div class="sub">Sistema de orçamento técnico</div>
 </header>
 
+
 <div class="container">
 
-<!-- SERVIÇO -->
+
+<!-- =====================================================
+     1 - SERVIÇO
+===================================================== -->
+
 <div class="card">
 
-<h2>1 • Serviço</h2>
+    <h2>1 • Serviço</h2>
 
-<label>Cliente</label>
-<input id="cliente" type="text" placeholder="Nome do cliente">
+    <label for="cliente">Cliente</label>
+    <input
+        id="cliente"
+        type="text"
+        placeholder="Nome do cliente"
+    >
 
-<label>Tipo de serviço</label>
-<select id="servico" onchange="alterarServico()">
-    <option value="topografia">Levantamento topográfico</option>
-    <option value="divisao">Divisão de lotes</option>
-    <option value="locacao">Locação</option>
-    <option value="georreferenciamento">Georreferenciamento</option>
-    <option value="outro">Outro serviço</option>
-</select>
+    <label for="servico">Tipo de serviço</label>
 
-<label>Cidade</label>
-<input id="cidade" type="text" placeholder="Cidade do serviço">
+    <select id="servico" onchange="alterarServico()">
 
-<div id="loteArea" class="lote-box oculto">
+        <option value="topografia">
+            Levantamento topográfico
+        </option>
 
-    <strong>Divisão de lotes</strong>
+        <option value="divisao">
+            Divisão de lotes
+        </option>
+
+        <option value="locacao">
+            Locação
+        </option>
+
+        <option value="georreferenciamento">
+            Georreferenciamento
+        </option>
+
+        <option value="outro">
+            Outro serviço
+        </option>
+
+    </select>
+
+
+    <label for="cidade">Cidade</label>
+
+    <input
+        id="cidade"
+        type="text"
+        placeholder="Cidade do serviço"
+    >
+
+
+    <!-- DIVISÃO DE LOTES -->
+
+    <div id="loteArea" class="lote-box oculto">
+
+        <strong>Divisão de lotes</strong>
+
+        <div class="grid">
+
+            <div>
+
+                <label for="qtdLotes">
+                    Quantidade de lotes
+                </label>
+
+                <input
+                    id="qtdLotes"
+                    type="number"
+                    min="1"
+                    value="1"
+                    oninput="atualizarLotes()"
+                >
+
+            </div>
+
+
+            <div>
+
+                <label for="valorLote">
+                    Valor por lote
+                </label>
+
+                <input
+                    id="valorLote"
+                    type="number"
+                    min="0"
+                    step="10"
+                    value="250"
+                    oninput="atualizarLotes()"
+                >
+
+            </div>
+
+        </div>
+
+
+        <div class="lote-total">
+
+            Preço comercial:
+
+            <span id="totalLotes">
+                R$ 250,00
+            </span>
+
+        </div>
+
+
+        <div class="info">
+
+            Regra comercial definida:
+            R$ 250,00 por lote.
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- =====================================================
+     2 - CAMPO E DESLOCAMENTO
+===================================================== -->
+
+<div class="card">
+
+    <h2>2 • Campo e deslocamento</h2>
+
 
     <div class="grid">
 
         <div>
-            <label>Quantidade de lotes</label>
-            <input id="qtdLotes" type="number" min="1" value="1" oninput="atualizarLotes()">
+
+            <label for="pessoas">
+                Pessoas da equipe
+            </label>
+
+            <input
+                id="pessoas"
+                type="number"
+                min="1"
+                value="3"
+            >
+
         </div>
+
 
         <div>
-            <label>Valor por lote</label>
-            <input id="valorLote" type="number" min="0" value="250" oninput="atualizarLotes()">
+
+            <label for="horasCampo">
+                Horas de campo
+            </label>
+
+            <input
+                id="horasCampo"
+                type="number"
+                min="0"
+                step="0.5"
+                value="4"
+            >
+
         </div>
 
     </div>
 
-    <div class="lote-total">
-        Preço comercial: <span id="totalLotes">R$ 250,00</span>
+
+    <label for="valorHoraPessoa">
+        Valor/hora por pessoa
+    </label>
+
+    <input
+        id="valorHoraPessoa"
+        type="number"
+        min="0"
+        step="1"
+        value="25"
+    >
+
+
+    <div class="grid">
+
+        <div>
+
+            <label for="kmIda">
+                Distância ida (km)
+            </label>
+
+            <input
+                id="kmIda"
+                type="number"
+                min="0"
+                step="1"
+                value="0"
+            >
+
+        </div>
+
+
+        <div>
+
+            <label for="consumo">
+                Consumo do veículo (km/L)
+            </label>
+
+            <input
+                id="consumo"
+                type="number"
+                min="0"
+                step="0.1"
+                value="8"
+            >
+
+        </div>
+
     </div>
+
+
+    <div class="grid">
+
+        <div>
+
+            <label for="combustivel">
+                Preço combustível (R$/L)
+            </label>
+
+            <input
+                id="combustivel"
+                type="number"
+                min="0"
+                step="0.01"
+                value="6.30"
+            >
+
+        </div>
+
+
+        <div>
+
+            <label for="horasViagem">
+                Horas de viagem — ida + volta
+            </label>
+
+            <input
+                id="horasViagem"
+                type="number"
+                min="0"
+                step="0.5"
+                value="0"
+            >
+
+        </div>
+
+    </div>
+
+
+    <label for="custoKm">
+        Veículo — custo por km
+    </label>
+
+    <input
+        id="custoKm"
+        type="number"
+        min="0"
+        step="0.01"
+        value="0.60"
+    >
+
 
     <div class="info">
-        Regra comercial definida: R$ 250,00 por lote.
+
+        A distância informada é somente a ida.
+        O sistema calcula automaticamente ida + volta.
+
+        <br>
+
+        As horas de viagem já devem ser informadas
+        como o total de ida + volta.
+
+    </div>
+
+</div>
+
+
+
+<!-- =====================================================
+     3 - ESCRITÓRIO
+===================================================== -->
+
+<div class="card">
+
+    <h2>3 • Escritório</h2>
+
+
+    <label for="valorHoraEscritorio">
+        Valor/hora de escritório
+    </label>
+
+    <input
+        id="valorHoraEscritorio"
+        type="number"
+        min="0"
+        step="1"
+        value="60"
+    >
+
+
+    <div class="grid">
+
+        <div>
+
+            <label for="horasIBGE">
+                IBGE / georreferenciamento (h)
+            </label>
+
+            <input
+                id="horasIBGE"
+                type="number"
+                min="0"
+                step="0.1"
+                value="0.83"
+            >
+
+        </div>
+
+
+        <div>
+
+            <label for="horasProcessamento">
+                Processamento (h)
+            </label>
+
+            <input
+                id="horasProcessamento"
+                type="number"
+                min="0"
+                step="0.5"
+                value="2"
+            >
+
+        </div>
+
+    </div>
+
+
+    <div class="grid">
+
+        <div>
+
+            <label for="horasCAD">
+                CAD / desenho (h)
+            </label>
+
+            <input
+                id="horasCAD"
+                type="number"
+                min="0"
+                step="0.5"
+                value="2"
+            >
+
+        </div>
+
+
+        <div>
+
+            <label for="horasCurvas">
+                Curvas / planta (h)
+            </label>
+
+            <input
+                id="horasCurvas"
+                type="number"
+                min="0"
+                step="0.5"
+                value="1"
+            >
+
+        </div>
+
+    </div>
+
+
+    <label for="horasMemorial">
+        Memorial / revisão / entrega (h)
+    </label>
+
+    <input
+        id="horasMemorial"
+        type="number"
+        min="0"
+        step="0.5"
+        value="1"
+    >
+
+</div>
+
+
+
+<!-- =====================================================
+     4 - EQUIPAMENTOS
+===================================================== -->
+
+<div class="card">
+
+    <h2>4 • Equipamentos</h2>
+
+
+    <div class="check">
+
+        <input
+            id="usaRTK"
+            type="checkbox"
+            checked
+            onchange="mostrarEquipamentos()"
+        >
+
+        <label for="usaRTK">
+            Utilizar RTK
+        </label>
+
+    </div>
+
+
+    <div id="rtkArea">
+
+        <div class="grid">
+
+            <div>
+
+                <label for="valorRTK">
+                    Valor do RTK
+                </label>
+
+                <input
+                    id="valorRTK"
+                    type="number"
+                    min="0"
+                    value="80000"
+                >
+
+            </div>
+
+
+            <div>
+
+                <label for="residualRTK">
+                    Valor residual
+                </label>
+
+                <input
+                    id="residualRTK"
+                    type="number"
+                    min="0"
+                    value="10000"
+                >
+
+            </div>
+
+        </div>
+
+
+        <div class="grid">
+
+            <div>
+
+                <label for="vidaRTK">
+                    Vida econômica (anos)
+                </label>
+
+                <input
+                    id="vidaRTK"
+                    type="number"
+                    min="1"
+                    value="8"
+                >
+
+            </div>
+
+
+            <div>
+
+                <label for="horasAnoRTK">
+                    Horas/ano estimadas
+                </label>
+
+                <input
+                    id="horasAnoRTK"
+                    type="number"
+                    min="1"
+                    value="400"
+                >
+
+            </div>
+
+        </div>
+
+
+        <label for="manutRTK">
+            Manutenção anual do RTK
+        </label>
+
+        <input
+            id="manutRTK"
+            type="number"
+            min="0"
+            value="0"
+        >
+
+
+        <label for="horasUsoRTK">
+            Horas de utilização do RTK neste serviço
+        </label>
+
+        <input
+            id="horasUsoRTK"
+            type="number"
+            min="0"
+            step="0.5"
+            value="4"
+        >
+
+    </div>
+
+
+    <div class="check">
+
+        <input
+            id="usaNikon"
+            type="checkbox"
+        >
+
+        <label for="usaNikon">
+            Utilizar Nikon / estação / teodolito
+        </label>
+
+    </div>
+
+</div>
+
+
+
+<!-- =====================================================
+     5 - CUSTOS FIXOS E MARGEM
+===================================================== -->
+
+<div class="card">
+
+    <h2>5 • Custos fixos e margem</h2>
+
+
+    <label for="parcelaRTK">
+        Parcela mensal do RTK
+    </label>
+
+    <input
+        id="parcelaRTK"
+        type="number"
+        min="0"
+        value="700"
+    >
+
+
+    <label for="outrosFixos">
+        Outros custos fixos mensais
+    </label>
+
+    <input
+        id="outrosFixos"
+        type="number"
+        min="0"
+        value="0"
+    >
+
+
+    <label for="servicosMes">
+        Quantidade esperada de serviços por mês
+    </label>
+
+    <input
+        id="servicosMes"
+        type="number"
+        min="1"
+        value="8"
+    >
+
+
+    <label for="conselho">
+        Conselho / taxa / responsabilidade técnica
+    </label>
+
+    <input
+        id="conselho"
+        type="number"
+        min="0"
+        value="69"
+    >
+
+
+    <label for="margem">
+        Margem desejada (%)
+    </label>
+
+    <input
+        id="margem"
+        type="number"
+        min="0"
+        max="99"
+        step="1"
+        value="30"
+    >
+
+
+    <label for="precoManual">
+        Seu preço manual
+    </label>
+
+    <input
+        id="precoManual"
+        type="number"
+        min="0"
+        step="10"
+        value="1100"
+    >
+
+</div>
+
+
+
+<!-- =====================================================
+     RESULTADO
+===================================================== -->
+
+<div class="card resultado">
+
+    <h2>ORÇAMENTO CALCULADO</h2>
+
+
+    <div class="info">
+        Preço sugerido pela regra comercial
+    </div>
+
+
+    <div
+        class="big"
+        id="precoSugerido"
+    >
+        R$ 0,00
+    </div>
+
+
+    <div class="linha">
+
+        <span>
+            Preço necessário pela margem
+        </span>
+
+        <strong id="precoMargem">
+            R$ 0,00
+        </strong>
+
+    </div>
+
+
+    <div class="linha">
+
+        <span>
+            Equipe
+        </span>
+
+        <strong id="cEquipe">
+            R$ 0,00
+        </strong>
+
+    </div>
+
+
+    <div class="linha">
+
+        <span>
+            Combustível
+        </span>
+
+        <strong id="cCombustivel">
+            R$ 0,00
+        </strong>
+
+    </div>
+
+
+    <div class="linha">
+
+        <span>
+            Veículo / km
+        </span>
+
+        <strong id="cVeiculo">
+            R$ 0,00
+        </strong>
+
+    </div>
+
+
+    <div class="linha">
+
+        <span>
+            Viagem da equipe
+        </span>
+
+        <strong id="cViagem">
+            R$ 0,00
+        </strong>
+
+    </div>
+
+
+    <div class="linha">
+
+        <span>
+            Escritório
+        </span>
+
+        <strong id="cEscritorio">
+            R$ 0,00
+        </strong>
+
+    </div>
+
+
+    <div class="linha">
+
+        <span>
+            Equipamentos
+        </span>
+
+        <strong id="cEquipamentos">
+            R$ 0,00
+        </strong>
+
+    </div>
+
+
+    <div class="linha">
+
+        <span>
+            Rateio dos fixos
+        </span>
+
+        <strong id="cFixos">
+            R$ 0,00
+        </strong>
+
+    </div>
+
+
+    <div class="linha">
+
+        <span>
+            Conselho / taxa
+        </span>
+
+        <strong id="cConselho">
+            R$ 0,00
+        </strong>
+
+    </div>
+
+
+    <div class="linha total">
+
+        <span>
+            CUSTO TOTAL
+        </span>
+
+        <strong id="cTotal">
+            R$ 0,00
+        </strong>
+
+    </div>
+
+
+    <br>
+
+
+    <h3>
+        Seu preço
+    </h3>
+
+
+    <div class="linha">
+
+        <span>
+            Preço informado
+        </span>
+
+        <strong id="rManual">
+            R$ 0,00
+        </strong>
+
+    </div>
+
+
+    <div class="linha">
+
+        <span>
+            Lucro
+        </span>
+
+        <strong id="rLucro">
+            R$ 0,00
+        </strong>
+
+    </div>
+
+
+    <div class="linha">
+
+        <span>
+            Margem efetiva
+        </span>
+
+        <strong id="rMargem">
+            0%
+        </strong>
+
+    </div>
+
+
+    <div class="linha">
+
+        <span>
+            RTK econômico/h
+        </span>
+
+        <strong id="rRTK">
+            R$ 0,00
+        </strong>
+
     </div>
 
 </div>
@@ -275,302 +1122,47 @@ input:focus,select:focus{
 </div>
 
 
-<!-- CAMPO -->
-<div class="card">
 
-<h2>2 • Campo e deslocamento</h2>
+<!-- =====================================================
+     BARRA FIXA
+===================================================== -->
 
-<div class="grid">
-
-<div>
-<label>Pessoas da equipe</label>
-<input id="pessoas" type="number" min="1" value="3">
-</div>
-
-<div>
-<label>Horas de campo</label>
-<input id="horasCampo" type="number" min="0" step="0.5" value="4">
-</div>
-
-</div>
-
-<label>Valor/hora por pessoa</label>
-<input id="valorHoraPessoa" type="number" min="0" value="25">
-
-<div class="grid">
-
-<div>
-<label>Distância ida (km)</label>
-<input id="kmIda" type="number" min="0" step="1" value="0">
-</div>
-
-<div>
-<label>Consumo do veículo (km/L)</label>
-<input id="consumo" type="number" min="0" step="0.1" value="8">
-</div>
-
-</div>
-
-<div class="grid">
-
-<div>
-<label>Preço combustível (R$/L)</label>
-<input id="combustivel" type="number" min="0" step="0.01" value="6.30">
-</div>
-
-<div>
-<label>Horas de viagem — ida + volta</label>
-<input id="horasViagem" type="number" min="0" step="0.5" value="0">
-</div>
-
-</div>
-
-<label>Veículo — custo por km</label>
-<input id="custoKm" type="number" min="0" step="0.01" value="0.60">
-
-<div class="info">
-A distância informada é somente a ida. O sistema calcula automaticamente ida + volta.
-</div>
-
-</div>
-
-
-<!-- ESCRITÓRIO -->
-<div class="card">
-
-<h2>3 • Escritório</h2>
-
-<label>Valor/hora de escritório</label>
-<input id="valorHoraEscritorio" type="number" min="0" value="60">
-
-<div class="grid">
-
-<div>
-<label>IBGE / georreferenciamento (h)</label>
-<input id="horasIBGE" type="number" min="0" step="0.1" value="0.83">
-</div>
-
-<div>
-<label>Processamento (h)</label>
-<input id="horasProcessamento" type="number" min="0" step="0.5" value="2">
-</div>
-
-</div>
-
-<div class="grid">
-
-<div>
-<label>CAD / desenho (h)</label>
-<input id="horasCAD" type="number" min="0" step="0.5" value="2">
-</div>
-
-<div>
-<label>Curvas / planta (h)</label>
-<input id="horasCurvas" type="number" min="0" step="0.5" value="1">
-</div>
-
-</div>
-
-<label>Memorial / revisão / entrega (h)</label>
-<input id="horasMemorial" type="number" min="0" step="0.5" value="1">
-
-</div>
-
-
-<!-- EQUIPAMENTOS -->
-<div class="card">
-
-<h2>4 • Equipamentos</h2>
-
-<div class="check">
-<input id="usaRTK" type="checkbox" checked onchange="mostrarEquipamentos()">
-<label for="usaRTK">Utilizar RTK</label>
-</div>
-
-<div id="rtkArea">
-
-<div class="grid">
-
-<div>
-<label>Valor do RTK</label>
-<input id="valorRTK" type="number" value="80000">
-</div>
-
-<div>
-<label>Valor residual</label>
-<input id="residualRTK" type="number" value="10000">
-</div>
-
-</div>
-
-<div class="grid">
-
-<div>
-<label>Vida econômica (anos)</label>
-<input id="vidaRTK" type="number" value="8">
-</div>
-
-<div>
-<label>Horas/ano estimadas</label>
-<input id="horasAnoRTK" type="number" value="400">
-</div>
-
-</div>
-
-<label>Manutenção anual do RTK</label>
-<input id="manutRTK" type="number" value="0">
-
-<label>Horas de utilização do RTK neste serviço</label>
-<input id="horasUsoRTK" type="number" min="0" step="0.5" value="4">
-
-</div>
-
-<div class="check">
-<input id="usaNikon" type="checkbox">
-<label for="usaNikon">Utilizar Nikon / estação / teodolito</label>
-</div>
-
-</div>
-
-
-<!-- CUSTOS -->
-<div class="card">
-
-<h2>5 • Custos fixos e margem</h2>
-
-<label>Parcela mensal do RTK</label>
-<input id="parcelaRTK" type="number" value="700">
-
-<label>Outros custos fixos mensais</label>
-<input id="outrosFixos" type="number" value="0">
-
-<label>Quantidade esperada de serviços por mês</label>
-<input id="servicosMes" type="number" min="1" value="8">
-
-<label>Conselho / taxa / responsabilidade técnica</label>
-<input id="conselho" type="number" value="69">
-
-<label>Margem desejada (%)</label>
-<input id="margem" type="number" min="0" max="99" step="1" value="30">
-
-<label>Seu preço manual</label>
-<input id="precoManual" type="number" min="0" step="10" value="1100">
-
-</div>
-
-
-<!-- RESULTADO -->
-<div class="card resultado">
-
-<h2>ORÇAMENTO CALCULADO</h2>
-
-<div class="info" style="color:#b8c4bf;">
-Preço sugerido pela regra comercial
-</div>
-
-<div class="big" id="precoSugerido">
-R$ 0,00
-</div>
-
-<div class="linha">
-<span>Preço necessário pela margem</span>
-<strong id="precoMargem">R$ 0,00</strong>
-</div>
-
-<div class="linha">
-<span>Equipe</span>
-<strong id="cEquipe">R$ 0,00</strong>
-</div>
-
-<div class="linha">
-<span>Combustível</span>
-<strong id="cCombustivel">R$ 0,00</strong>
-</div>
-
-<div class="linha">
-<span>Veículo / km</span>
-<strong id="cVeiculo">R$ 0,00</strong>
-</div>
-
-<div class="linha">
-<span>Viagem da equipe</span>
-<strong id="cViagem">R$ 0,00</strong>
-</div>
-
-<div class="linha">
-<span>Escritório</span>
-<strong id="cEscritorio">R$ 0,00</strong>
-</div>
-
-<div class="linha">
-<span>Equipamentos</span>
-<strong id="cEquipamentos">R$ 0,00</strong>
-</div>
-
-<div class="linha">
-<span>Rateio dos fixos</span>
-<strong id="cFixos">R$ 0,00</strong>
-</div>
-
-<div class="linha">
-<span>Conselho / taxa</span>
-<strong id="cConselho">R$ 0,00</strong>
-</div>
-
-<div class="linha total">
-<span>CUSTO TOTAL</span>
-<strong id="cTotal">R$ 0,00</strong>
-</div>
-
-<br>
-
-<h3>Seu preço</h3>
-
-<div class="linha">
-<span>Preço informado</span>
-<strong id="rManual">R$ 0,00</strong>
-</div>
-
-<div class="linha">
-<span>Lucro</span>
-<strong id="rLucro">R$ 0,00</strong>
-</div>
-
-<div class="linha">
-<span>Margem efetiva</span>
-<strong id="rMargem">0%</strong>
-</div>
-
-<div class="linha">
-<span>RTK econômico/h</span>
-<strong id="rRTK">R$ 0,00</strong>
-</div>
-
-</div>
-
-</div>
-
-
-<!-- BARRA FIXA -->
 <div class="rodape-fixo">
 
-<div class="rodape-interno">
+    <div class="rodape-interno">
 
-<div class="preco-fixo">
-<small>Preço sugerido</small>
-<strong id="precoRodape">R$ 0,00</strong>
+        <div class="preco-fixo">
+
+            <small>
+                Preço sugerido
+            </small>
+
+            <strong id="precoRodape">
+                R$ 0,00
+            </strong>
+
+        </div>
+
+
+        <button
+            class="btn-calcular"
+            type="button"
+            onclick="calcular()"
+        >
+            CALCULAR
+        </button>
+
+    </div>
+
 </div>
 
-<button class="btn-calcular" onclick="calcular()">
-CALCULAR
-</button>
-
-</div>
-
-</div>
 
 
 <script>
+
+/* =====================================================
+   FUNÇÕES BÁSICAS
+===================================================== */
 
 function numero(id){
 
@@ -592,19 +1184,30 @@ function numero(id){
 
 function dinheiro(valor){
 
-    return Number(valor || 0).toLocaleString("pt-BR",{
-        style:"currency",
-        currency:"BRL"
-    });
+    return Number(valor || 0).toLocaleString(
+        "pt-BR",
+        {
+            style:"currency",
+            currency:"BRL"
+        }
+    );
 
 }
 
 
+
+/* =====================================================
+   MOSTRAR / ESCONDER DIVISÃO DE LOTES
+===================================================== */
+
 function alterarServico(){
 
-    const servico = document.getElementById("servico").value;
+    const servico =
+        document.getElementById("servico").value;
 
-    const area = document.getElementById("loteArea");
+    const area =
+        document.getElementById("loteArea");
+
 
     if(servico === "divisao"){
 
@@ -616,29 +1219,65 @@ function alterarServico(){
 
     }
 
+
     calcular();
+
 }
 
+
+
+/* =====================================================
+   ATUALIZAR PREÇO DOS LOTES
+===================================================== */
 
 function atualizarLotes(){
 
-    const qtd = Math.max(1,numero("qtdLotes"));
+    const qtd =
+        Math.max(
+            1,
+            numero("qtdLotes")
+        );
 
-    const valor = numero("valorLote");
 
-    const total = qtd * valor;
+    const valor =
+        numero("valorLote");
 
-    document.getElementById("totalLotes").textContent = dinheiro(total);
+
+    const total =
+        qtd * valor;
+
+
+    const campo =
+        document.getElementById("totalLotes");
+
+
+    if(campo){
+
+        campo.textContent =
+            dinheiro(total);
+
+    }
+
 
     calcular();
+
 }
 
 
+
+/* =====================================================
+   MOSTRAR EQUIPAMENTO RTK
+===================================================== */
+
 function mostrarEquipamentos(){
 
-    const usa = document.getElementById("usaRTK").checked;
+    const usa =
+        document.getElementById("usaRTK").checked;
 
-    const area = document.getElementById("rtkArea");
+
+    const area =
+        document.getElementById("rtkArea");
+
 
     if(usa){
 
@@ -653,39 +1292,66 @@ function mostrarEquipamentos(){
 }
 
 
+
+/* =====================================================
+   CÁLCULO PRINCIPAL
+===================================================== */
+
 function calcular(){
 
-    /* =========================
-       DADOS DO SERVIÇO
-    ========================== */
 
-    const servico = document.getElementById("servico").value;
+    /* -------------------------------------------------
+       SERVIÇO
+    ------------------------------------------------- */
+
+    const servico =
+        document.getElementById("servico").value;
+
 
     let precoComercial = 0;
 
+
     if(servico === "divisao"){
 
-        const qtd = Math.max(1,numero("qtdLotes"));
+        const qtd =
+            Math.max(
+                1,
+                numero("qtdLotes")
+            );
 
-        const valorLote = numero("valorLote");
 
-        precoComercial = qtd * valorLote;
+        const valorLote =
+            numero("valorLote");
 
-        document.getElementById("totalLotes").textContent =
+
+        precoComercial =
+            qtd * valorLote;
+
+
+        document.getElementById(
+            "totalLotes"
+        ).textContent =
             dinheiro(precoComercial);
 
     }
 
 
-    /* =========================
-       EQUIPE
-    ========================== */
 
-    const pessoas = numero("pessoas");
+    /* -------------------------------------------------
+       EQUIPE DE CAMPO
+    ------------------------------------------------- */
 
-    const horasCampo = numero("horasCampo");
+    const pessoas =
+        numero("pessoas");
 
-    const valorHoraPessoa = numero("valorHoraPessoa");
+
+    const horasCampo =
+        numero("horasCampo");
+
+
+    const valorHoraPessoa =
+        numero("valorHoraPessoa");
+
 
     const custoEquipe =
         pessoas *
@@ -693,42 +1359,63 @@ function calcular(){
         valorHoraPessoa;
 
 
-    /* =========================
+
+    /* -------------------------------------------------
        DESLOCAMENTO
-    ========================== */
+    ------------------------------------------------- */
 
-    const kmIda = numero("kmIda");
+    const kmIda =
+        numero("kmIda");
 
-    const kmTotal = kmIda * 2;
 
-    const consumo = numero("consumo");
+    const kmTotal =
+        kmIda * 2;
 
-    const precoCombustivel = numero("combustivel");
+
+    const consumo =
+        numero("consumo");
+
+
+    const precoCombustivel =
+        numero("combustivel");
+
 
     let custoCombustivel = 0;
+
 
     if(consumo > 0){
 
         custoCombustivel =
-            (kmTotal / consumo) *
+            (
+                kmTotal /
+                consumo
+            ) *
             precoCombustivel;
 
     }
 
 
-    const custoKm = numero("custoKm");
+    const custoKm =
+        numero("custoKm");
+
 
     const custoVeiculo =
-        kmTotal * custoKm;
+        kmTotal *
+        custoKm;
 
 
-    /* =========================
+
+    /* -------------------------------------------------
        HORAS DE VIAGEM
+       
        IMPORTANTE:
-       já são ida + volta
-    ========================== */
+       O campo já representa ida + volta.
+       Portanto NÃO multiplicamos por 2.
+    ------------------------------------------------- */
 
-    const horasViagem = numero("horasViagem");
+    const horasViagem =
+        numero("horasViagem");
+
 
     const custoViagem =
         pessoas *
@@ -736,27 +1423,34 @@ function calcular(){
         valorHoraPessoa;
 
 
-    /* =========================
+
+    /* -------------------------------------------------
        ESCRITÓRIO
-    ========================== */
+    ------------------------------------------------- */
 
     const valorHoraEscritorio =
         numero("valorHoraEscritorio");
 
+
     const horasIBGE =
         numero("horasIBGE");
+
 
     const horasProcessamento =
         numero("horasProcessamento");
 
+
     const horasCAD =
         numero("horasCAD");
+
 
     const horasCurvas =
         numero("horasCurvas");
 
+
     const horasMemorial =
         numero("horasMemorial");
+
 
     const horasEscritorio =
         horasIBGE +
@@ -765,57 +1459,81 @@ function calcular(){
         horasCurvas +
         horasMemorial;
 
+
     const custoEscritorio =
         horasEscritorio *
         valorHoraEscritorio;
 
 
-    /* =========================
+
+    /* -------------------------------------------------
        RTK
-    ========================== */
+    ------------------------------------------------- */
 
     const usaRTK =
-        document.getElementById("usaRTK").checked;
+        document.getElementById(
+            "usaRTK"
+        ).checked;
+
 
     let custoRTK = 0;
 
     let rtkHora = 0;
+
 
     if(usaRTK){
 
         const valorRTK =
             numero("valorRTK");
 
+
         const residual =
             numero("residualRTK");
+
 
         const vida =
             numero("vidaRTK");
 
+
         const horasAno =
             numero("horasAnoRTK");
 
+
         const manut =
             numero("manutRTK");
+
 
         const horasUso =
             numero("horasUsoRTK");
 
 
-        if(vida > 0 && horasAno > 0){
+        if(
+            vida > 0 &&
+            horasAno > 0
+        ){
 
             const depreciacaoAno =
-                (valorRTK - residual) / vida;
+                (
+                    valorRTK -
+                    residual
+                ) /
+                vida;
+
 
             const depreciacaoHora =
-                depreciacaoAno / horasAno;
+                depreciacaoAno /
+                horasAno;
+
 
             const manutHora =
-                manut / horasAno;
+                manut /
+                horasAno;
+
 
             rtkHora =
                 depreciacaoHora +
                 manutHora;
+
 
             custoRTK =
                 rtkHora *
@@ -826,35 +1544,47 @@ function calcular(){
     }
 
 
-    /* =========================
-       FIXOS
-    ========================== */
+
+    /* -------------------------------------------------
+       CUSTOS FIXOS
+    ------------------------------------------------- */
 
     const parcelaRTK =
         numero("parcelaRTK");
 
+
     const outrosFixos =
         numero("outrosFixos");
 
+
     const servicosMes =
-        Math.max(1,numero("servicosMes"));
+        Math.max(
+            1,
+            numero("servicosMes")
+        );
+
 
     const rateioFixos =
-        (parcelaRTK + outrosFixos) /
+        (
+            parcelaRTK +
+            outrosFixos
+        ) /
         servicosMes;
 
 
-    /* =========================
+
+    /* -------------------------------------------------
        CONSELHO
-    ========================== */
+    ------------------------------------------------- */
 
     const conselho =
         numero("conselho");
 
 
-    /* =========================
+
+    /* -------------------------------------------------
        CUSTO TOTAL
-    ========================== */
+    ------------------------------------------------- */
 
     const custoTotal =
         custoEquipe +
@@ -867,45 +1597,49 @@ function calcular(){
         conselho;
 
 
-    /* =========================
+
+    /* -------------------------------------------------
        MARGEM
-    ========================== */
+    ------------------------------------------------- */
 
     const margemPercentual =
         numero("margem");
 
+
     const margem =
         margemPercentual / 100;
 
+
     let precoMargem = 0;
+
 
     if(margem < 1){
 
         precoMargem =
             custoTotal /
-            (1 - margem);
+            (
+                1 -
+                margem
+            );
 
     }
 
 
-    /* =========================
+
+    /* -------------------------------------------------
        PREÇO SUGERIDO
-    ========================== */
+       
+       DIVISÃO DE LOTES:
+       preço comercial = quantidade × valor por lote
+
+       OUTROS SERVIÇOS:
+       preço necessário para atingir a margem
+    ------------------------------------------------- */
 
     let precoSugerido;
 
+
     if(servico === "divisao"){
-
-        /*
-        REGRA COMERCIAL:
-        R$250 por lote.
-
-        Os custos não são somados
-        automaticamente ao preço.
-
-        Eles servem para mostrar
-        quanto sobra de lucro.
-        */
 
         precoSugerido =
             precoComercial;
@@ -918,12 +1652,14 @@ function calcular(){
     }
 
 
-    /* =========================
-       PREÇO MANUAL
-    ========================== */
+
+    /* -------------------------------------------------
+       PREÇO INFORMADO
+    ------------------------------------------------- */
 
     let precoManual =
         numero("precoManual");
+
 
     if(servico === "divisao"){
 
@@ -933,9 +1669,10 @@ function calcular(){
     }
 
 
-    /* =========================
+
+    /* -------------------------------------------------
        LUCRO
-    ========================== */
+    ------------------------------------------------- */
 
     const lucro =
         precoManual -
@@ -944,84 +1681,174 @@ function calcular(){
 
     let margemEfetiva = 0;
 
+
     if(precoManual > 0){
 
         margemEfetiva =
-            (lucro / precoManual) * 100;
+            (
+                lucro /
+                precoManual
+            ) *
+            100;
 
     }
 
 
-    /* =========================
+
+    /* -------------------------------------------------
        MOSTRAR RESULTADOS
-    ========================== */
+    ------------------------------------------------- */
 
-    document.getElementById("precoSugerido").textContent =
+    document.getElementById(
+        "precoSugerido"
+    ).textContent =
         dinheiro(precoSugerido);
 
-    document.getElementById("precoRodape").textContent =
+
+    document.getElementById(
+        "precoRodape"
+    ).textContent =
         dinheiro(precoSugerido);
 
-    document.getElementById("precoMargem").textContent =
+
+    document.getElementById(
+        "precoMargem"
+    ).textContent =
         dinheiro(precoMargem);
 
-    document.getElementById("cEquipe").textContent =
+
+    document.getElementById(
+        "cEquipe"
+    ).textContent =
         dinheiro(custoEquipe);
 
-    document.getElementById("cCombustivel").textContent =
+
+    document.getElementById(
+        "cCombustivel"
+    ).textContent =
         dinheiro(custoCombustivel);
 
-    document.getElementById("cVeiculo").textContent =
+
+    document.getElementById(
+        "cVeiculo"
+    ).textContent =
         dinheiro(custoVeiculo);
 
-    document.getElementById("cViagem").textContent =
+
+    document.getElementById(
+        "cViagem"
+    ).textContent =
         dinheiro(custoViagem);
 
-    document.getElementById("cEscritorio").textContent =
+
+    document.getElementById(
+        "cEscritorio"
+    ).textContent =
         dinheiro(custoEscritorio);
 
-    document.getElementById("cEquipamentos").textContent =
+
+    document.getElementById(
+        "cEquipamentos"
+    ).textContent =
         dinheiro(custoRTK);
 
-    document.getElementById("cFixos").textContent =
+
+    document.getElementById(
+        "cFixos"
+    ).textContent =
         dinheiro(rateioFixos);
 
-    document.getElementById("cConselho").textContent =
+
+    document.getElementById(
+        "cConselho"
+    ).textContent =
         dinheiro(conselho);
 
-    document.getElementById("cTotal").textContent =
+
+    document.getElementById(
+        "cTotal"
+    ).textContent =
         dinheiro(custoTotal);
 
-    document.getElementById("rManual").textContent =
+
+    document.getElementById(
+        "rManual"
+    ).textContent =
         dinheiro(precoManual);
 
-    document.getElementById("rLucro").textContent =
+
+    document.getElementById(
+        "rLucro"
+    ).textContent =
         dinheiro(lucro);
 
-    document.getElementById("rMargem").textContent =
-        margemEfetiva.toFixed(1) + "%";
 
-    document.getElementById("rRTK").textContent =
+    document.getElementById(
+        "rMargem"
+    ).textContent =
+        margemEfetiva.toFixed(1) +
+        "%";
+
+
+    document.getElementById(
+        "rRTK"
+    ).textContent =
         dinheiro(rtkHora);
+
+
+
+    /* -------------------------------------------------
+       CORES DO LUCRO / MARGEM
+    ------------------------------------------------- */
+
+    const elementoLucro =
+        document.getElementById("rLucro");
+
+
+    if(lucro >= 0){
+
+        elementoLucro.classList.add(
+            "positivo"
+        );
+
+        elementoLucro.classList.remove(
+            "negativo"
+        );
+
+    }else{
+
+        elementoLucro.classList.add(
+            "negativo"
+        );
+
+        elementoLucro.classList.remove(
+            "positivo"
+        );
+
+    }
 
 }
 
 
-/* =========================
+
+/* =====================================================
    INICIALIZAÇÃO
-========================= */
+===================================================== */
 
-window.addEventListener("load",function(){
+window.addEventListener(
+    "load",
+    function(){
 
-    alterarServico();
+        alterarServico();
 
-    mostrarEquipamentos();
+        mostrarEquipamentos();
 
-    atualizarLotes();
+        atualizarLotes();
 
-    calcular();
+        calcular();
 
-});
+    }
+);
 
 </script>
 
