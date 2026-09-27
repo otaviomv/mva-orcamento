@@ -1,244 +1,753 @@
-<!doctype html>
-<html lang="pt-BR">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#101820">
-<title>MVA Geo — Orçamentos</title>
-<style>
-:root{
- --bg:#eef1f2;--card:#fff;--dark:#101820;--green:#176b4d;--green2:#e7f5ef;
- --text:#17202a;--muted:#6b747d;--line:#dce2e5;--red:#b42318;--yellow:#9a6700;
-}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;padding-bottom:105px}
-.header{background:var(--dark);color:white;padding:18px 17px 20px;position:relative}
-.brand{font-size:22px;font-weight:800;letter-spacing:.3px}.brand span{color:#5fc89c}
-.subtitle{font-size:12px;color:#b9c3ca;margin-top:3px}
-.container{max-width:720px;margin:auto;padding:12px}
-.tabs{display:flex;gap:7px;overflow:auto;padding:2px 1px 10px;scrollbar-width:none}
-.tabs button{flex:0 0 auto;border:1px solid var(--line);background:white;color:var(--muted);border-radius:20px;padding:9px 13px;font-weight:700}
-.tabs button.active{background:var(--green);color:white;border-color:var(--green)}
-.page{display:none}.page.active{display:block}
-.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:15px;margin-bottom:12px;box-shadow:0 2px 9px #00000007}
-.card h2{font-size:16px;margin:0 0 13px}.hint{font-size:12px;color:var(--muted);line-height:1.4}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.full{grid-column:1/-1}
-label{display:block;color:var(--muted);font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.25px}
-input,select{display:block;width:100%;margin-top:5px;padding:12px 11px;border:1px solid #cfd6da;border-radius:10px;background:#fff;color:var(--text);font-size:16px;min-height:46px}
-input:focus,select:focus{outline:2px solid #b7dfcf;border-color:var(--green)}
-.toggle{display:flex;align-items:center;justify-content:space-between;border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:8px}
-.toggle input{width:21px;min-height:21px;margin:0;accent-color:var(--green)}
-.metricgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.metric{border:1px solid var(--line);border-radius:11px;padding:11px;background:#fafbfc}.metric small{display:block;color:var(--muted);font-weight:700;font-size:10px}.metric strong{display:block;font-size:16px;margin-top:4px}
-.btn{width:100%;border:0;border-radius:12px;padding:14px;font-size:16px;font-weight:800;background:var(--green);color:#fff;min-height:50px}
-.btn.secondary{background:#e7ebed;color:var(--text)}
-.actions{display:grid;grid-template-columns:1fr 1fr;gap:9px}
-.result{background:var(--dark);color:white;border-radius:17px;padding:17px;margin-top:10px}
-.result .label{color:#aeb8be;font-size:11px;text-transform:uppercase;font-weight:800}
-.price{font-size:34px;font-weight:900;margin:3px 0 13px}
-.rrow{display:flex;justify-content:space-between;padding:8px 0;border-top:1px solid #ffffff18;font-size:13px}.rrow b{font-size:14px}
-.badge{display:inline-block;padding:6px 9px;border-radius:20px;font-size:11px;font-weight:800;margin-bottom:10px}
-.badge.ok{background:#d8f3e6;color:#0d6847}.badge.warn{background:#fff0c2;color:#805600}.badge.bad{background:#ffdcd8;color:#9d2017}
-.bottom{position:fixed;z-index:20;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--line);padding:9px max(12px,env(safe-area-inset-left)) calc(9px + env(safe-area-inset-bottom));box-shadow:0 -3px 15px #00000010}
-.bottominner{max-width:720px;margin:auto;display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center}
-.bottomprice small{display:block;color:var(--muted);font-size:10px;font-weight:800;text-transform:uppercase}.bottomprice strong{font-size:21px}
-.calc{border:0;background:var(--green);color:white;border-radius:11px;padding:12px 18px;font-weight:900;font-size:14px}
-.sectiontitle{font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:var(--green);font-weight:900;margin:17px 3px 8px}
-@media(max-width:420px){.grid{grid-template-columns:1fr}.full{grid-column:auto}.price{font-size:30px}}
-@media(min-width:700px){.container{padding-top:18px}}
-</style>
-</head>
-<body>
+<section id="resultado" class="page">
 
-<header class="header">
- <div class="brand">MVA <span>Geo</span></div>
- <div class="subtitle">Sistema de orçamento técnico</div>
-</header>
-
-<div class="container">
- <div class="tabs">
-  <button class="tab active" data-page="servico">1 • Serviço</button>
-  <button class="tab" data-page="campo">2 • Campo</button>
-  <button class="tab" data-page="escritorio">3 • Escritório</button>
-  <button class="tab" data-page="custos">4 • Custos</button>
-  <button class="tab" data-page="resultado">5 • Resultado</button>
- </div>
-
- <section id="servico" class="page active">
-  <div class="card">
-   <h2>Identificação</h2>
-   <div class="grid">
-    <div class="full"><label>Cliente</label><input id="cliente" placeholder="Nome do cliente"></div>
-    <div><label>Serviço</label><select id="tipo"><option>Terreno urbano</option><option>Planialtimétrico</option><option>Planialtimétrico + curvas</option><option>Divisão de lotes</option><option>Locação</option><option>Outro</option></select></div>
-    <div><label>Cidade</label><input id="cidade" placeholder="Cidade/RS"></div>
-   </div>
-  </div>
-  <button class="btn" onclick="go('campo')">Continuar →</button>
- </section>
-
- <section id="campo" class="page">
-  <div class="card">
-   <h2>Equipe e trabalho de campo</h2>
-   <div class="grid">
-    <div><label>Pessoas</label><input id="pessoas" type="number" value="3" min="1"></div>
-    <div><label>Horas de campo</label><input id="campoHoras" type="number" value="4" step=".25"></div>
-    <div><label>R$/hora/pessoa</label><input id="horaPessoa" type="number" value="12.50" step=".01"></div>
-    <div><label>Distância ida (km)</label><input id="km" type="number" value="0"></div>
-    <div><label>Consumo (km/L)</label><input id="consumo" type="number" value="10" step=".1"></div>
-    <div><label>Combustível R$/L</label><input id="comb" type="number" value="6.30" step=".01"></div>
-    <div><label>Horas viagem total</label><input id="viagem" type="number" value="0" step=".25"></div>
-    <div><label>Custo extra veículo/km</label><input id="extraKm" type="number" value="0" step=".01"></div>
-   </div>
-   <p class="hint">A distância informada é somente de ida. O sistema calcula ida + volta.</p>
-  </div>
-  <div class="actions"><button class="btn secondary" onclick="go('servico')">← Voltar</button><button class="btn" onclick="go('escritorio')">Continuar →</button></div>
- </section>
-
- <section id="escritorio" class="page">
-  <div class="card">
-   <h2>Horas de escritório</h2>
-   <div class="grid">
-    <div><label>R$/hora</label><input id="horaEscritorio" type="number" value="60"></div>
-    <div><label>IBGE / georef. (h)</label><input id="ibge" type="number" value=".83" step=".01"></div>
-    <div><label>Processamento (h)</label><input id="proc" type="number" value="0" step=".25"></div>
-    <div><label>CAD / desenho (h)</label><input id="cad" type="number" value="0" step=".25"></div>
-    <div><label>Curvas (h)</label><input id="curvas" type="number" value="0" step=".25"></div>
-    <div><label>Memorial/revisão (h)</label><input id="memorial" type="number" value="0" step=".25"></div>
-   </div>
-  </div>
-  <div class="card">
-   <h2>Equipamentos utilizados</h2>
-   <div class="toggle"><span>Usar RTK S6 / S6 Plus</span><input id="usarRtk" type="checkbox" checked></div>
-   <div class="toggle"><span>Usar Nikon NE-20H</span><input id="usarNikon" type="checkbox"></div>
-  </div>
-  <div class="actions"><button class="btn secondary" onclick="go('campo')">← Voltar</button><button class="btn" onclick="go('custos')">Continuar →</button></div>
- </section>
-
- <section id="custos" class="page">
-  <div class="card">
-   <h2>RTK — custo econômico</h2>
-   <div class="grid">
-    <div><label>Valor reposição</label><input id="rtkValor" type="number" value="80000"></div>
-    <div><label>Valor residual</label><input id="rtkResidual" type="number" value="10000"></div>
-    <div><label>Vida econômica (anos)</label><input id="rtkVida" type="number" value="8"></div>
-    <div><label>Manutenção anual</label><input id="rtkManut" type="number" value="0"></div>
-    <div><label>Horas uso/ano</label><input id="rtkHorasAno" type="number" value="400"></div>
-    <div><label>Horas RTK neste serviço</label><input id="rtkHoras" type="number" value="4"></div>
-   </div>
-   <div class="metricgrid" style="margin-top:10px">
-    <div class="metric"><small>Depreciação/h</small><strong id="depH">R$ 0,00</strong></div>
-    <div class="metric"><small>Custo econômico/h</small><strong id="ecoH">R$ 0,00</strong></div>
-   </div>
+  <div id="badge" class="badge ok">
+   ORÇAMENTO CALCULADO
   </div>
 
-  <div class="card">
-   <h2>Custos fixos mensais</h2>
-   <div class="grid">
-    <div><label>Parcela RTK / mês</label><input id="parcela" type="number" value="700"></div>
-    <div><label>Outros fixos / mês</label><input id="outrosFixos" type="number" value="0"></div>
-    <div class="full"><label>Serviços previstos / mês</label><input id="servicosMes" type="number" value="8"></div>
-   </div>
-   <p class="hint">Ex.: R$700 ÷ 8 serviços = R$87,50 de rateio por serviço.</p>
-  </div>
-
-  <div class="card">
-   <h2>Margem e responsabilidade</h2>
-   <div class="grid">
-    <div><label>Conselho / taxa</label><input id="taxa" type="number" value="69"></div>
-    <div><label>Margem desejada (%)</label><input id="margem" type="number" value="30"></div>
-    <div class="full"><label>Preço que pretende cobrar</label><input id="precoManual" type="number" value="1100"></div>
-   </div>
-  </div>
-  <div class="actions"><button class="btn secondary" onclick="go('escritorio')">← Voltar</button><button class="btn" onclick="calcular();go('resultado')">CALCULAR →</button></div>
- </section>
-
- <section id="resultado" class="page">
-  <div id="badge" class="badge ok">ORÇAMENTO CALCULADO</div>
   <div class="result">
-   <div class="label">Preço sugerido pela margem</div>
-   <div class="price" id="sugerido">R$ 0,00</div>
-   <div class="rrow"><span>Equipe</span><b id="rEquipe">R$ 0,00</b></div>
-   <div class="rrow"><span>Combustível</span><b id="rComb">R$ 0,00</b></div>
-   <div class="rrow"><span>Veículo/km</span><b id="rVeic">R$ 0,00</b></div>
-   <div class="rrow"><span>Viagem equipe</span><b id="rViagem">R$ 0,00</b></div>
-   <div class="rrow"><span>Escritório</span><b id="rEscritorio">R$ 0,00</b></div>
-   <div class="rrow"><span>Equipamentos</span><b id="rEquip">R$ 0,00</b></div>
-   <div class="rrow"><span>Rateio dos fixos</span><b id="rFixos">R$ 0,00</b></div>
-   <div class="rrow"><span>Conselho/taxa</span><b id="rTaxa">R$ 0,00</b></div>
-   <div class="rrow"><span><strong>CUSTO TOTAL</strong></span><b id="rCusto">R$ 0,00</b></div>
+
+   <div class="label">
+    Preço sugerido pela regra comercial
+   </div>
+
+   <div class="price" id="sugerido">
+    R$ 0,00
+   </div>
+
+   <div id="rowLotes" class="rrow" style="display:none">
+    <span>Divisão de lotes</span>
+    <b id="rLotes">R$ 0,00</b>
+   </div>
+
+   <div id="rowBaseMargem" class="rrow">
+    <span>Preço necessário pela margem</span>
+    <b id="rBaseMargem">R$ 0,00</b>
+   </div>
+
+   <div class="rrow">
+    <span>Equipe</span>
+    <b id="rEquipe">R$ 0,00</b>
+   </div>
+
+   <div class="rrow">
+    <span>Combustível</span>
+    <b id="rComb">R$ 0,00</b>
+   </div>
+
+   <div class="rrow">
+    <span>Veículo/km</span>
+    <b id="rVeic">R$ 0,00</b>
+   </div>
+
+   <div class="rrow">
+    <span>Viagem equipe</span>
+    <b id="rViagem">R$ 0,00</b>
+   </div>
+
+   <div class="rrow">
+    <span>Escritório</span>
+    <b id="rEscritorio">R$ 0,00</b>
+   </div>
+
+   <div class="rrow">
+    <span>Equipamentos</span>
+    <b id="rEquip">R$ 0,00</b>
+   </div>
+
+   <div class="rrow">
+    <span>Rateio dos fixos</span>
+    <b id="rFixos">R$ 0,00</b>
+   </div>
+
+   <div class="rrow">
+    <span>Conselho/taxa</span>
+    <b id="rTaxa">R$ 0,00</b>
+   </div>
+
+   <div class="rrow">
+    <span><strong>CUSTO TOTAL</strong></span>
+    <b id="rCusto">R$ 0,00</b>
+   </div>
+
   </div>
+
 
   <div class="card" style="margin-top:12px">
+
    <h2>Seu preço</h2>
+
    <div class="metricgrid">
-    <div class="metric"><small>Preço informado</small><strong id="rManual">R$ 0,00</strong></div>
-    <div class="metric"><small>Lucro</small><strong id="rLucro">R$ 0,00</strong></div>
-    <div class="metric"><small>Margem efetiva</small><strong id="rMargem">0%</strong></div>
-    <div class="metric"><small>RTK econômico/h</small><strong id="rRtkH">R$ 0,00</strong></div>
+
+    <div class="metric">
+     <small>Preço informado</small>
+     <strong id="rManual">R$ 0,00</strong>
+    </div>
+
+    <div class="metric">
+     <small>Lucro</small>
+     <strong id="rLucro">R$ 0,00</strong>
+    </div>
+
+    <div class="metric">
+     <small>Margem efetiva</small>
+     <strong id="rMargem">0%</strong>
+    </div>
+
+    <div class="metric">
+     <small>RTK econômico/h</small>
+     <strong id="rRtkH">R$ 0,00</strong>
+    </div>
+
    </div>
+
   </div>
+
 
   <div class="actions">
-   <button class="btn secondary" onclick="go('custos')">← Alterar</button>
-   <button class="btn" onclick="window.print()">IMPRIMIR / PDF</button>
+
+   <button class="btn secondary" onclick="go('custos')">
+    ← Alterar
+   </button>
+
+   <button class="btn" onclick="window.print()">
+    IMPRIMIR / PDF
+   </button>
+
   </div>
+
  </section>
+
 </div>
+
 
 <div class="bottom">
+
  <div class="bottominner">
-  <div class="bottomprice"><small>Preço sugerido</small><strong id="bottomPrice">R$ 0,00</strong></div>
-  <button class="calc" onclick="calcular();go('resultado')">CALCULAR</button>
+
+  <div class="bottomprice">
+   <small>Preço sugerido</small>
+   <strong id="bottomPrice">R$ 0,00</strong>
+  </div>
+
+  <button class="calc" onclick="calcular();go('resultado')">
+   CALCULAR
+  </button>
+
  </div>
+
 </div>
 
+
 <script>
-function n(id){var e=document.getElementById(id);var v=parseFloat((e&&e.value||"").replace(",","."));return isFinite(v)?v:0}
-function money(v){return (Number(v)||0).toLocaleString("pt-BR",{style:"currency",currency:"BRL"})}
-function calcular(){
- var pessoas=n("pessoas"),campo=n("campoHoras"),hora=n("horaPessoa");
- var equipe=pessoas*campo*hora;
- var km=n("km")*2,cons=n("consumo"),comb=cons>0?km/cons*n("comb"):0;
- var veic=km*n("extraKm"),viagem=pessoas*n("viagem")*hora;
- var escr=(n("ibge")+n("proc")+n("cad")+n("curvas")+n("memorial"))*n("horaEscritorio");
- var dep=Math.max(n("rtkValor")-n("rtkResidual"),0)/(Math.max(n("rtkVida"),1)*Math.max(n("rtkHorasAno"),1));
- var manut=n("rtkManut")/Math.max(n("rtkHorasAno"),1),eco=dep+manut;
- var equip=document.getElementById("usarRtk").checked?eco*n("rtkHoras"):0;
- var fix=(n("parcela")+n("outrosFixos"))/Math.max(n("servicosMes"),1);
- var taxa=n("taxa"),custo=equipe+comb+veic+viagem+escr+equip+fix+taxa;
- var m=Math.min(Math.max(n("margem"),0),90)/100,sug=custo/(1-m);
- var manual=n("precoManual"),lucro=manual-custo,me=manual?lucro/manual*100:0;
- document.getElementById("depH").textContent=money(dep);
- document.getElementById("ecoH").textContent=money(eco);
- document.getElementById("sugerido").textContent=money(sug);
- document.getElementById("bottomPrice").textContent=money(sug);
- document.getElementById("rEquipe").textContent=money(equipe);
- document.getElementById("rComb").textContent=money(comb);
- document.getElementById("rVeic").textContent=money(veic);
- document.getElementById("rViagem").textContent=money(viagem);
- document.getElementById("rEscritorio").textContent=money(escr);
- document.getElementById("rEquip").textContent=money(equip);
- document.getElementById("rFixos").textContent=money(fix);
- document.getElementById("rTaxa").textContent=money(taxa);
- document.getElementById("rCusto").textContent=money(custo);
- document.getElementById("rManual").textContent=money(manual);
- document.getElementById("rLucro").textContent=money(lucro);
- document.getElementById("rMargem").textContent=me.toFixed(1)+"%";
- document.getElementById("rRtkH").textContent=money(eco);
- var b=document.getElementById("badge");
- if(manual<custo){b.textContent="⚠ PREÇO ABAIXO DO CUSTO";b.className="badge bad"}
- else if(me<15){b.textContent="⚠ MARGEM APERTADA";b.className="badge warn"}
- else{b.textContent="✓ MARGEM POSITIVA";b.className="badge ok"}
+
+function n(id){
+
+ var e=document.getElementById(id);
+
+ var v=parseFloat(
+  (e && e.value || "")
+  .replace(",",".")
+ );
+
+ return isFinite(v)?v:0;
+
 }
-function go(page){
- document.querySelectorAll(".page").forEach(function(x){x.classList.remove("active")});
- document.getElementById(page).classList.add("active");
- document.querySelectorAll(".tab").forEach(function(x){x.classList.toggle("active",x.dataset.page===page)});
- window.scrollTo({top:0,behavior:"smooth"});
+
+
+function money(v){
+
+ return (Number(v)||0).toLocaleString(
+  "pt-BR",
+  {
+   style:"currency",
+   currency:"BRL"
+  }
+ );
+
+}
+
+
+function atualizarLotes(){
+
+ var tipo=document.getElementById("tipo");
+
+ var bloco=document.getElementById("blocoLotes");
+
+ var ativo=
+  tipo &&
+  tipo.value==="Divisão de lotes";
+
+ if(bloco){
+
+  bloco.style.display=
+   ativo ? "block" : "none";
+
+ }
+
  calcular();
+
 }
-document.querySelectorAll(".tab").forEach(function(x){x.addEventListener("click",function(){go(x.dataset.page)})});
-window.onload=function(){calcular()};
+
+
+function calcular(){
+
+ /*
+  ==========================================
+  EQUIPE
+  ==========================================
+ */
+
+ var pessoas=n("pessoas");
+
+ var campo=n("campoHoras");
+
+ var hora=n("horaPessoa");
+
+ var equipe=
+  pessoas *
+  campo *
+  hora;
+
+
+ /*
+  ==========================================
+  DESLOCAMENTO
+  ==========================================
+ */
+
+ var kmIda=n("km");
+
+ /*
+  O campo "Distância ida" recebe somente
+  a distância de ida.
+
+  O sistema calcula automaticamente
+  ida + volta.
+ */
+
+ var kmTotal=
+  kmIda * 2;
+
+ var consumo=n("consumo");
+
+ var combPreco=n("comb");
+
+ var comb=
+  consumo>0
+   ? (kmTotal/consumo)*combPreco
+   : 0;
+
+ var veic=
+  kmTotal*n("extraKm");
+
+
+ /*
+  IMPORTANTE:
+
+  "Horas viagem total" já deve ser
+  informada como IDA + VOLTA.
+
+  Portanto NÃO multiplicamos por 2 aqui.
+ */
+
+ var viagem=
+  pessoas *
+  n("viagem") *
+  hora;
+
+
+ /*
+  ==========================================
+  ESCRITÓRIO
+  ==========================================
+ */
+
+ var horasEscritorio=
+
+  n("ibge")+
+  n("proc")+
+  n("cad")+
+  n("curvas")+
+  n("memorial");
+
+ var escr=
+  horasEscritorio *
+  n("horaEscritorio");
+
+
+ /*
+  ==========================================
+  RTK
+  ==========================================
+ */
+
+ var valorRtk=n("rtkValor");
+
+ var residual=n("rtkResidual");
+
+ var vida=n("rtkVida");
+
+ var horasAno=n("rtkHorasAno");
+
+ var dep=
+  Math.max(
+   valorRtk-residual,
+   0
+  ) /
+  (
+   Math.max(vida,1) *
+   Math.max(horasAno,1)
+  );
+
+ var manut=
+  n("rtkManut") /
+  Math.max(horasAno,1);
+
+ var eco=
+  dep+
+  manut;
+
+ var equip=0;
+
+ if(document.getElementById("usarRtk").checked){
+
+  equip=
+   eco *
+   n("rtkHoras");
+
+ }
+
+
+ /*
+  ==========================================
+  CUSTOS FIXOS
+  ==========================================
+ */
+
+ var fix=
+
+  (
+   n("parcela")+
+   n("outrosFixos")
+  ) /
+  Math.max(
+   n("servicosMes"),
+   1
+  );
+
+
+ /*
+  ==========================================
+  TAXA
+  ==========================================
+ */
+
+ var taxa=
+  n("taxa");
+
+
+ /*
+  ==========================================
+  CUSTO TOTAL DO SERVIÇO
+  ==========================================
+ */
+
+ var custo=
+
+  equipe+
+  comb+
+  veic+
+  viagem+
+  escr+
+  equip+
+  fix+
+  taxa;
+
+
+ /*
+  ==========================================
+  PREÇO NECESSÁRIO PARA A MARGEM
+  ==========================================
+ */
+
+ var margemPercentual=
+  Math.min(
+   Math.max(
+    n("margem"),
+    0
+   ),
+   90
+  );
+
+ var margem=
+  margemPercentual/100;
+
+ var precoNecessario=
+
+  custo/(1-margem);
+
+
+ /*
+  ==========================================
+  DIVISÃO DE LOTES
+  ==========================================
+ */
+
+ var tipo=
+  document.getElementById("tipo")
+   ? document.getElementById("tipo").value
+   : "";
+
+ var ehDivisao=
+  tipo==="Divisão de lotes";
+
+ var qtd=0;
+
+ var valorLote=0;
+
+ var totalLotes=0;
+
+
+ if(ehDivisao){
+
+  qtd=
+   Math.max(
+    Math.round(
+     n("qtdLotes")
+    ),
+    1
+   );
+
+  valorLote=
+   Math.max(
+    n("valorLote"),
+    0
+   );
+
+  totalLotes=
+   qtd*
+   valorLote;
+
+ }
+
+
+ /*
+  ==========================================
+  REGRA DO PREÇO SUGERIDO
+  ==========================================
+
+  Serviço normal:
+      preço sugerido =
+      preço necessário pela margem
+
+  Divisão de lotes:
+      preço sugerido =
+      quantidade × valor por lote
+
+  Os custos NÃO são adicionados novamente
+  ao preço dos lotes.
+
+  Eles servem para verificar:
+      - custo total
+      - lucro
+      - margem efetiva
+      - se o preço comercial cobre os custos
+ */
+
+ var sug=
+  ehDivisao
+   ? totalLotes
+   : precoNecessario;
+
+
+ /*
+  ==========================================
+  PREÇO MANUAL
+  ==========================================
+ */
+
+ var manual=
+  n("precoManual");
+
+
+ /*
+  Para divisão de lotes, se o usuário
+  ainda deixou o preço manual padrão
+  de R$1.100, usamos o preço comercial
+  calculado pelos lotes como preço do serviço.
+
+  Assim, por exemplo:
+
+      8 lotes × R$250
+      = R$2.000
+
+  O resultado passa a mostrar
+  R$2.000 como preço do serviço.
+ */
+
+ if(ehDivisao){
+
+  manual=
+   totalLotes;
+
+ }
+
+
+ /*
+  ==========================================
+  LUCRO E MARGEM
+  ==========================================
+ */
+
+ var lucro=
+  manual-
+  custo;
+
+ var margemEfetiva=
+  manual>0
+   ? (lucro/manual)*100
+   : 0;
+
+
+ /*
+  ==========================================
+  ATUALIZAÇÃO DA TELA
+  ==========================================
+ */
+
+ document.getElementById("depH")
+  .textContent=
+  money(dep);
+
+ document.getElementById("ecoH")
+  .textContent=
+  money(eco);
+
+ document.getElementById("sugerido")
+  .textContent=
+  money(sug);
+
+ document.getElementById("bottomPrice")
+  .textContent=
+  money(sug);
+
+
+ document.getElementById("rEquipe")
+  .textContent=
+  money(equipe);
+
+ document.getElementById("rComb")
+  .textContent=
+  money(comb);
+
+ document.getElementById("rVeic")
+  .textContent=
+  money(veic);
+
+ document.getElementById("rViagem")
+  .textContent=
+  money(viagem);
+
+ document.getElementById("rEscritorio")
+  .textContent=
+  money(escr);
+
+ document.getElementById("rEquip")
+  .textContent=
+  money(equip);
+
+ document.getElementById("rFixos")
+  .textContent=
+  money(fix);
+
+ document.getElementById("rTaxa")
+  .textContent=
+  money(taxa);
+
+ document.getElementById("rCusto")
+  .textContent=
+  money(custo);
+
+
+ document.getElementById("rManual")
+  .textContent=
+  money(manual);
+
+ document.getElementById("rLucro")
+  .textContent=
+  money(lucro);
+
+ document.getElementById("rMargem")
+  .textContent=
+  margemEfetiva.toFixed(1)+"%";
+
+ document.getElementById("rRtkH")
+  .textContent=
+  money(eco);
+
+
+ /*
+  ==========================================
+  INFORMAÇÕES DA DIVISÃO DE LOTES
+  ==========================================
+ */
+
+ document.getElementById("rBaseMargem")
+  .textContent=
+  money(precoNecessario);
+
+
+ var rowLotes=
+  document.getElementById("rowLotes");
+
+ if(ehDivisao){
+
+  rowLotes.style.display="flex";
+
+  document.getElementById("rLotes")
+   .textContent=
+   qtd+
+   " × "+
+   money(valorLote)+
+   " = "+
+   money(totalLotes);
+
+ }else{
+
+  rowLotes.style.display="none";
+
+  document.getElementById("rLotes")
+   .textContent=
+   money(0);
+
+ }
+
+
+ /*
+  ==========================================
+  AVISO DE RENTABILIDADE
+  ==========================================
+ */
+
+ var b=
+  document.getElementById("badge");
+
+
+ if(manual<custo){
+
+  b.textContent=
+   "⚠ PREÇO ABAIXO DO CUSTO";
+
+  b.className=
+   "badge bad";
+
+
+ }else if(margemEfetiva<15){
+
+  b.textContent=
+   "⚠ MARGEM APERTADA";
+
+  b.className=
+   "badge warn";
+
+
+ }else{
+
+  b.textContent=
+   "✓ MARGEM POSITIVA";
+
+  b.className=
+   "badge ok";
+
+ }
+
+}
+
+
+/*
+ ==========================================
+ NAVEGAÇÃO
+ ==========================================
+ */
+
+function go(page){
+
+ document
+  .querySelectorAll(".page")
+  .forEach(function(x){
+
+   x.classList.remove("active");
+
+  });
+
+
+ document
+  .getElementById(page)
+  .classList.add("active");
+
+
+ document
+  .querySelectorAll(".tab")
+  .forEach(function(x){
+
+   x.classList.toggle(
+    "active",
+    x.dataset.page===page
+   );
+
+  });
+
+
+ window.scrollTo({
+  top:0,
+  behavior:"smooth"
+ });
+
+
+ calcular();
+
+}
+
+
+/*
+ ==========================================
+ BOTÕES DAS ABAS
+ ==========================================
+ */
+
+document
+ .querySelectorAll(".tab")
+ .forEach(function(x){
+
+  x.addEventListener(
+   "click",
+   function(){
+
+    go(x.dataset.page);
+
+   }
+  );
+
+ });
+
+
+/*
+ ==========================================
+ INICIALIZAÇÃO
+ ==========================================
+ */
+
+window.onload=function(){
+
+ atualizarLotes();
+
+ calcular();
+
+};
+
 </script>
+
+</body>
+</html>
 </body>
 </html>
