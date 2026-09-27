@@ -1,753 +1,1047 @@
-<section id="resultado" class="page">
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <div id="badge" class="badge ok">
-   ORÇAMENTO CALCULADO
-  </div>
+<title>MVA Geo - Orçamento</title>
 
-  <div class="result">
+<style>
+*{
+    box-sizing:border-box;
+}
 
-   <div class="label">
-    Preço sugerido pela regra comercial
-   </div>
+body{
+    margin:0;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+    background:#f2f4f5;
+    color:#18201d;
+}
 
-   <div class="price" id="sugerido">
-    R$ 0,00
-   </div>
+header{
+    background:#17231f;
+    color:white;
+    padding:22px 18px 18px;
+}
 
-   <div id="rowLotes" class="rrow" style="display:none">
-    <span>Divisão de lotes</span>
-    <b id="rLotes">R$ 0,00</b>
-   </div>
+.logo{
+    font-size:25px;
+    font-weight:800;
+    letter-spacing:.5px;
+}
 
-   <div id="rowBaseMargem" class="rrow">
-    <span>Preço necessário pela margem</span>
-    <b id="rBaseMargem">R$ 0,00</b>
-   </div>
+.sub{
+    font-size:13px;
+    opacity:.75;
+    margin-top:3px;
+}
 
-   <div class="rrow">
-    <span>Equipe</span>
-    <b id="rEquipe">R$ 0,00</b>
-   </div>
+.container{
+    max-width:700px;
+    margin:auto;
+    padding:14px;
+    padding-bottom:100px;
+}
 
-   <div class="rrow">
-    <span>Combustível</span>
-    <b id="rComb">R$ 0,00</b>
-   </div>
+.card{
+    background:white;
+    border-radius:16px;
+    padding:17px;
+    margin-bottom:14px;
+    box-shadow:0 2px 8px rgba(0,0,0,.07);
+}
 
-   <div class="rrow">
-    <span>Veículo/km</span>
-    <b id="rVeic">R$ 0,00</b>
-   </div>
+.card h2{
+    margin:0 0 15px;
+    font-size:18px;
+}
 
-   <div class="rrow">
-    <span>Viagem equipe</span>
-    <b id="rViagem">R$ 0,00</b>
-   </div>
+label{
+    display:block;
+    font-size:13px;
+    font-weight:600;
+    margin:12px 0 6px;
+}
 
-   <div class="rrow">
-    <span>Escritório</span>
-    <b id="rEscritorio">R$ 0,00</b>
-   </div>
+input,select{
+    width:100%;
+    padding:13px 12px;
+    border:1px solid #d5dada;
+    border-radius:10px;
+    background:#fff;
+    font-size:16px;
+    outline:none;
+}
 
-   <div class="rrow">
-    <span>Equipamentos</span>
-    <b id="rEquip">R$ 0,00</b>
-   </div>
+input:focus,select:focus{
+    border-color:#25845a;
+    box-shadow:0 0 0 2px rgba(37,132,90,.12);
+}
 
-   <div class="rrow">
-    <span>Rateio dos fixos</span>
-    <b id="rFixos">R$ 0,00</b>
-   </div>
+.grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+}
 
-   <div class="rrow">
-    <span>Conselho/taxa</span>
-    <b id="rTaxa">R$ 0,00</b>
-   </div>
+.grid3{
+    display:grid;
+    grid-template-columns:1fr 1fr 1fr;
+    gap:10px;
+}
 
-   <div class="rrow">
-    <span><strong>CUSTO TOTAL</strong></span>
-    <b id="rCusto">R$ 0,00</b>
-   </div>
+.check{
+    display:flex;
+    align-items:center;
+    gap:9px;
+    margin-top:12px;
+    font-size:14px;
+}
 
-  </div>
+.check input{
+    width:20px;
+    height:20px;
+}
 
+.lote-box{
+    background:#eef7f1;
+    border:1px solid #cce6d5;
+    padding:13px;
+    border-radius:12px;
+    margin-top:12px;
+}
 
-  <div class="card" style="margin-top:12px">
+.lote-total{
+    margin-top:10px;
+    font-size:17px;
+    font-weight:800;
+    color:#176b43;
+}
 
-   <h2>Seu preço</h2>
+.resultado{
+    background:#17231f;
+    color:white;
+}
 
-   <div class="metricgrid">
+.resultado h2{
+    color:white;
+}
 
-    <div class="metric">
-     <small>Preço informado</small>
-     <strong id="rManual">R$ 0,00</strong>
+.big{
+    font-size:32px;
+    font-weight:800;
+    color:#75d59e;
+    margin:5px 0 18px;
+}
+
+.linha{
+    display:flex;
+    justify-content:space-between;
+    gap:10px;
+    padding:7px 0;
+    border-bottom:1px solid rgba(255,255,255,.1);
+    font-size:14px;
+}
+
+.linha:last-child{
+    border-bottom:0;
+}
+
+.total{
+    font-size:18px;
+    font-weight:800;
+    padding-top:12px;
+}
+
+.botao{
+    width:100%;
+    border:0;
+    border-radius:12px;
+    padding:15px;
+    background:#238653;
+    color:white;
+    font-size:17px;
+    font-weight:800;
+    cursor:pointer;
+}
+
+.botao:active{
+    transform:scale(.99);
+}
+
+.rodape-fixo{
+    position:fixed;
+    bottom:0;
+    left:0;
+    right:0;
+    background:white;
+    border-top:1px solid #ddd;
+    padding:10px 14px;
+    box-shadow:0 -3px 12px rgba(0,0,0,.08);
+    z-index:20;
+}
+
+.rodape-interno{
+    max-width:700px;
+    margin:auto;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+}
+
+.preco-fixo small{
+    display:block;
+    font-size:11px;
+    color:#777;
+}
+
+.preco-fixo strong{
+    font-size:21px;
+}
+
+.btn-calcular{
+    background:#238653;
+    color:white;
+    border:0;
+    border-radius:10px;
+    padding:12px 17px;
+    font-weight:800;
+}
+
+.oculto{
+    display:none;
+}
+
+.info{
+    font-size:12px;
+    color:#68716e;
+    margin-top:6px;
+    line-height:1.4;
+}
+
+.verde{
+    color:#238653;
+    font-weight:700;
+}
+
+@media(max-width:420px){
+    .grid3{
+        grid-template-columns:1fr 1fr;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <div class="logo">MVA Geo</div>
+    <div class="sub">Sistema de orçamento técnico</div>
+</header>
+
+<div class="container">
+
+<!-- SERVIÇO -->
+<div class="card">
+
+<h2>1 • Serviço</h2>
+
+<label>Cliente</label>
+<input id="cliente" type="text" placeholder="Nome do cliente">
+
+<label>Tipo de serviço</label>
+<select id="servico" onchange="alterarServico()">
+    <option value="topografia">Levantamento topográfico</option>
+    <option value="divisao">Divisão de lotes</option>
+    <option value="locacao">Locação</option>
+    <option value="georreferenciamento">Georreferenciamento</option>
+    <option value="outro">Outro serviço</option>
+</select>
+
+<label>Cidade</label>
+<input id="cidade" type="text" placeholder="Cidade do serviço">
+
+<div id="loteArea" class="lote-box oculto">
+
+    <strong>Divisão de lotes</strong>
+
+    <div class="grid">
+
+        <div>
+            <label>Quantidade de lotes</label>
+            <input id="qtdLotes" type="number" min="1" value="1" oninput="atualizarLotes()">
+        </div>
+
+        <div>
+            <label>Valor por lote</label>
+            <input id="valorLote" type="number" min="0" value="250" oninput="atualizarLotes()">
+        </div>
+
     </div>
 
-    <div class="metric">
-     <small>Lucro</small>
-     <strong id="rLucro">R$ 0,00</strong>
+    <div class="lote-total">
+        Preço comercial: <span id="totalLotes">R$ 250,00</span>
     </div>
 
-    <div class="metric">
-     <small>Margem efetiva</small>
-     <strong id="rMargem">0%</strong>
+    <div class="info">
+        Regra comercial definida: R$ 250,00 por lote.
     </div>
 
-    <div class="metric">
-     <small>RTK econômico/h</small>
-     <strong id="rRtkH">R$ 0,00</strong>
-    </div>
-
-   </div>
-
-  </div>
-
-
-  <div class="actions">
-
-   <button class="btn secondary" onclick="go('custos')">
-    ← Alterar
-   </button>
-
-   <button class="btn" onclick="window.print()">
-    IMPRIMIR / PDF
-   </button>
-
-  </div>
-
- </section>
+</div>
 
 </div>
 
 
-<div class="bottom">
+<!-- CAMPO -->
+<div class="card">
 
- <div class="bottominner">
+<h2>2 • Campo e deslocamento</h2>
 
-  <div class="bottomprice">
-   <small>Preço sugerido</small>
-   <strong id="bottomPrice">R$ 0,00</strong>
-  </div>
+<div class="grid">
 
-  <button class="calc" onclick="calcular();go('resultado')">
-   CALCULAR
-  </button>
+<div>
+<label>Pessoas da equipe</label>
+<input id="pessoas" type="number" min="1" value="3">
+</div>
 
- </div>
+<div>
+<label>Horas de campo</label>
+<input id="horasCampo" type="number" min="0" step="0.5" value="4">
+</div>
+
+</div>
+
+<label>Valor/hora por pessoa</label>
+<input id="valorHoraPessoa" type="number" min="0" value="25">
+
+<div class="grid">
+
+<div>
+<label>Distância ida (km)</label>
+<input id="kmIda" type="number" min="0" step="1" value="0">
+</div>
+
+<div>
+<label>Consumo do veículo (km/L)</label>
+<input id="consumo" type="number" min="0" step="0.1" value="8">
+</div>
+
+</div>
+
+<div class="grid">
+
+<div>
+<label>Preço combustível (R$/L)</label>
+<input id="combustivel" type="number" min="0" step="0.01" value="6.30">
+</div>
+
+<div>
+<label>Horas de viagem — ida + volta</label>
+<input id="horasViagem" type="number" min="0" step="0.5" value="0">
+</div>
+
+</div>
+
+<label>Veículo — custo por km</label>
+<input id="custoKm" type="number" min="0" step="0.01" value="0.60">
+
+<div class="info">
+A distância informada é somente a ida. O sistema calcula automaticamente ida + volta.
+</div>
+
+</div>
+
+
+<!-- ESCRITÓRIO -->
+<div class="card">
+
+<h2>3 • Escritório</h2>
+
+<label>Valor/hora de escritório</label>
+<input id="valorHoraEscritorio" type="number" min="0" value="60">
+
+<div class="grid">
+
+<div>
+<label>IBGE / georreferenciamento (h)</label>
+<input id="horasIBGE" type="number" min="0" step="0.1" value="0.83">
+</div>
+
+<div>
+<label>Processamento (h)</label>
+<input id="horasProcessamento" type="number" min="0" step="0.5" value="2">
+</div>
+
+</div>
+
+<div class="grid">
+
+<div>
+<label>CAD / desenho (h)</label>
+<input id="horasCAD" type="number" min="0" step="0.5" value="2">
+</div>
+
+<div>
+<label>Curvas / planta (h)</label>
+<input id="horasCurvas" type="number" min="0" step="0.5" value="1">
+</div>
+
+</div>
+
+<label>Memorial / revisão / entrega (h)</label>
+<input id="horasMemorial" type="number" min="0" step="0.5" value="1">
+
+</div>
+
+
+<!-- EQUIPAMENTOS -->
+<div class="card">
+
+<h2>4 • Equipamentos</h2>
+
+<div class="check">
+<input id="usaRTK" type="checkbox" checked onchange="mostrarEquipamentos()">
+<label for="usaRTK">Utilizar RTK</label>
+</div>
+
+<div id="rtkArea">
+
+<div class="grid">
+
+<div>
+<label>Valor do RTK</label>
+<input id="valorRTK" type="number" value="80000">
+</div>
+
+<div>
+<label>Valor residual</label>
+<input id="residualRTK" type="number" value="10000">
+</div>
+
+</div>
+
+<div class="grid">
+
+<div>
+<label>Vida econômica (anos)</label>
+<input id="vidaRTK" type="number" value="8">
+</div>
+
+<div>
+<label>Horas/ano estimadas</label>
+<input id="horasAnoRTK" type="number" value="400">
+</div>
+
+</div>
+
+<label>Manutenção anual do RTK</label>
+<input id="manutRTK" type="number" value="0">
+
+<label>Horas de utilização do RTK neste serviço</label>
+<input id="horasUsoRTK" type="number" min="0" step="0.5" value="4">
+
+</div>
+
+<div class="check">
+<input id="usaNikon" type="checkbox">
+<label for="usaNikon">Utilizar Nikon / estação / teodolito</label>
+</div>
+
+</div>
+
+
+<!-- CUSTOS -->
+<div class="card">
+
+<h2>5 • Custos fixos e margem</h2>
+
+<label>Parcela mensal do RTK</label>
+<input id="parcelaRTK" type="number" value="700">
+
+<label>Outros custos fixos mensais</label>
+<input id="outrosFixos" type="number" value="0">
+
+<label>Quantidade esperada de serviços por mês</label>
+<input id="servicosMes" type="number" min="1" value="8">
+
+<label>Conselho / taxa / responsabilidade técnica</label>
+<input id="conselho" type="number" value="69">
+
+<label>Margem desejada (%)</label>
+<input id="margem" type="number" min="0" max="99" step="1" value="30">
+
+<label>Seu preço manual</label>
+<input id="precoManual" type="number" min="0" step="10" value="1100">
+
+</div>
+
+
+<!-- RESULTADO -->
+<div class="card resultado">
+
+<h2>ORÇAMENTO CALCULADO</h2>
+
+<div class="info" style="color:#b8c4bf;">
+Preço sugerido pela regra comercial
+</div>
+
+<div class="big" id="precoSugerido">
+R$ 0,00
+</div>
+
+<div class="linha">
+<span>Preço necessário pela margem</span>
+<strong id="precoMargem">R$ 0,00</strong>
+</div>
+
+<div class="linha">
+<span>Equipe</span>
+<strong id="cEquipe">R$ 0,00</strong>
+</div>
+
+<div class="linha">
+<span>Combustível</span>
+<strong id="cCombustivel">R$ 0,00</strong>
+</div>
+
+<div class="linha">
+<span>Veículo / km</span>
+<strong id="cVeiculo">R$ 0,00</strong>
+</div>
+
+<div class="linha">
+<span>Viagem da equipe</span>
+<strong id="cViagem">R$ 0,00</strong>
+</div>
+
+<div class="linha">
+<span>Escritório</span>
+<strong id="cEscritorio">R$ 0,00</strong>
+</div>
+
+<div class="linha">
+<span>Equipamentos</span>
+<strong id="cEquipamentos">R$ 0,00</strong>
+</div>
+
+<div class="linha">
+<span>Rateio dos fixos</span>
+<strong id="cFixos">R$ 0,00</strong>
+</div>
+
+<div class="linha">
+<span>Conselho / taxa</span>
+<strong id="cConselho">R$ 0,00</strong>
+</div>
+
+<div class="linha total">
+<span>CUSTO TOTAL</span>
+<strong id="cTotal">R$ 0,00</strong>
+</div>
+
+<br>
+
+<h3>Seu preço</h3>
+
+<div class="linha">
+<span>Preço informado</span>
+<strong id="rManual">R$ 0,00</strong>
+</div>
+
+<div class="linha">
+<span>Lucro</span>
+<strong id="rLucro">R$ 0,00</strong>
+</div>
+
+<div class="linha">
+<span>Margem efetiva</span>
+<strong id="rMargem">0%</strong>
+</div>
+
+<div class="linha">
+<span>RTK econômico/h</span>
+<strong id="rRTK">R$ 0,00</strong>
+</div>
+
+</div>
+
+</div>
+
+
+<!-- BARRA FIXA -->
+<div class="rodape-fixo">
+
+<div class="rodape-interno">
+
+<div class="preco-fixo">
+<small>Preço sugerido</small>
+<strong id="precoRodape">R$ 0,00</strong>
+</div>
+
+<button class="btn-calcular" onclick="calcular()">
+CALCULAR
+</button>
+
+</div>
 
 </div>
 
 
 <script>
 
-function n(id){
+function numero(id){
 
- var e=document.getElementById(id);
+    const elemento = document.getElementById(id);
 
- var v=parseFloat(
-  (e && e.value || "")
-  .replace(",",".")
- );
+    if(!elemento){
+        return 0;
+    }
 
- return isFinite(v)?v:0;
+    let valor = parseFloat(elemento.value);
+
+    if(isNaN(valor)){
+        return 0;
+    }
+
+    return valor;
+}
+
+
+function dinheiro(valor){
+
+    return Number(valor || 0).toLocaleString("pt-BR",{
+        style:"currency",
+        currency:"BRL"
+    });
 
 }
 
 
-function money(v){
+function alterarServico(){
 
- return (Number(v)||0).toLocaleString(
-  "pt-BR",
-  {
-   style:"currency",
-   currency:"BRL"
-  }
- );
+    const servico = document.getElementById("servico").value;
 
+    const area = document.getElementById("loteArea");
+
+    if(servico === "divisao"){
+
+        area.classList.remove("oculto");
+
+    }else{
+
+        area.classList.add("oculto");
+
+    }
+
+    calcular();
 }
 
 
 function atualizarLotes(){
 
- var tipo=document.getElementById("tipo");
+    const qtd = Math.max(1,numero("qtdLotes"));
 
- var bloco=document.getElementById("blocoLotes");
+    const valor = numero("valorLote");
 
- var ativo=
-  tipo &&
-  tipo.value==="Divisão de lotes";
+    const total = qtd * valor;
 
- if(bloco){
+    document.getElementById("totalLotes").textContent = dinheiro(total);
 
-  bloco.style.display=
-   ativo ? "block" : "none";
+    calcular();
+}
 
- }
 
- calcular();
+function mostrarEquipamentos(){
+
+    const usa = document.getElementById("usaRTK").checked;
+
+    const area = document.getElementById("rtkArea");
+
+    if(usa){
+
+        area.classList.remove("oculto");
+
+    }else{
+
+        area.classList.add("oculto");
+
+    }
 
 }
 
 
 function calcular(){
 
- /*
-  ==========================================
-  EQUIPE
-  ==========================================
- */
+    /* =========================
+       DADOS DO SERVIÇO
+    ========================== */
 
- var pessoas=n("pessoas");
+    const servico = document.getElementById("servico").value;
 
- var campo=n("campoHoras");
+    let precoComercial = 0;
 
- var hora=n("horaPessoa");
+    if(servico === "divisao"){
 
- var equipe=
-  pessoas *
-  campo *
-  hora;
+        const qtd = Math.max(1,numero("qtdLotes"));
 
+        const valorLote = numero("valorLote");
 
- /*
-  ==========================================
-  DESLOCAMENTO
-  ==========================================
- */
+        precoComercial = qtd * valorLote;
 
- var kmIda=n("km");
+        document.getElementById("totalLotes").textContent =
+            dinheiro(precoComercial);
 
- /*
-  O campo "Distância ida" recebe somente
-  a distância de ida.
+    }
 
-  O sistema calcula automaticamente
-  ida + volta.
- */
 
- var kmTotal=
-  kmIda * 2;
+    /* =========================
+       EQUIPE
+    ========================== */
 
- var consumo=n("consumo");
+    const pessoas = numero("pessoas");
 
- var combPreco=n("comb");
+    const horasCampo = numero("horasCampo");
 
- var comb=
-  consumo>0
-   ? (kmTotal/consumo)*combPreco
-   : 0;
+    const valorHoraPessoa = numero("valorHoraPessoa");
 
- var veic=
-  kmTotal*n("extraKm");
+    const custoEquipe =
+        pessoas *
+        horasCampo *
+        valorHoraPessoa;
 
 
- /*
-  IMPORTANTE:
+    /* =========================
+       DESLOCAMENTO
+    ========================== */
 
-  "Horas viagem total" já deve ser
-  informada como IDA + VOLTA.
+    const kmIda = numero("kmIda");
 
-  Portanto NÃO multiplicamos por 2 aqui.
- */
+    const kmTotal = kmIda * 2;
 
- var viagem=
-  pessoas *
-  n("viagem") *
-  hora;
+    const consumo = numero("consumo");
 
+    const precoCombustivel = numero("combustivel");
 
- /*
-  ==========================================
-  ESCRITÓRIO
-  ==========================================
- */
+    let custoCombustivel = 0;
 
- var horasEscritorio=
+    if(consumo > 0){
 
-  n("ibge")+
-  n("proc")+
-  n("cad")+
-  n("curvas")+
-  n("memorial");
+        custoCombustivel =
+            (kmTotal / consumo) *
+            precoCombustivel;
 
- var escr=
-  horasEscritorio *
-  n("horaEscritorio");
+    }
 
 
- /*
-  ==========================================
-  RTK
-  ==========================================
- */
+    const custoKm = numero("custoKm");
 
- var valorRtk=n("rtkValor");
+    const custoVeiculo =
+        kmTotal * custoKm;
 
- var residual=n("rtkResidual");
 
- var vida=n("rtkVida");
+    /* =========================
+       HORAS DE VIAGEM
+       IMPORTANTE:
+       já são ida + volta
+    ========================== */
 
- var horasAno=n("rtkHorasAno");
+    const horasViagem = numero("horasViagem");
 
- var dep=
-  Math.max(
-   valorRtk-residual,
-   0
-  ) /
-  (
-   Math.max(vida,1) *
-   Math.max(horasAno,1)
-  );
+    const custoViagem =
+        pessoas *
+        horasViagem *
+        valorHoraPessoa;
 
- var manut=
-  n("rtkManut") /
-  Math.max(horasAno,1);
 
- var eco=
-  dep+
-  manut;
+    /* =========================
+       ESCRITÓRIO
+    ========================== */
 
- var equip=0;
+    const valorHoraEscritorio =
+        numero("valorHoraEscritorio");
 
- if(document.getElementById("usarRtk").checked){
+    const horasIBGE =
+        numero("horasIBGE");
 
-  equip=
-   eco *
-   n("rtkHoras");
+    const horasProcessamento =
+        numero("horasProcessamento");
 
- }
+    const horasCAD =
+        numero("horasCAD");
 
+    const horasCurvas =
+        numero("horasCurvas");
 
- /*
-  ==========================================
-  CUSTOS FIXOS
-  ==========================================
- */
+    const horasMemorial =
+        numero("horasMemorial");
 
- var fix=
+    const horasEscritorio =
+        horasIBGE +
+        horasProcessamento +
+        horasCAD +
+        horasCurvas +
+        horasMemorial;
 
-  (
-   n("parcela")+
-   n("outrosFixos")
-  ) /
-  Math.max(
-   n("servicosMes"),
-   1
-  );
+    const custoEscritorio =
+        horasEscritorio *
+        valorHoraEscritorio;
 
 
- /*
-  ==========================================
-  TAXA
-  ==========================================
- */
+    /* =========================
+       RTK
+    ========================== */
 
- var taxa=
-  n("taxa");
+    const usaRTK =
+        document.getElementById("usaRTK").checked;
 
+    let custoRTK = 0;
 
- /*
-  ==========================================
-  CUSTO TOTAL DO SERVIÇO
-  ==========================================
- */
+    let rtkHora = 0;
 
- var custo=
+    if(usaRTK){
 
-  equipe+
-  comb+
-  veic+
-  viagem+
-  escr+
-  equip+
-  fix+
-  taxa;
+        const valorRTK =
+            numero("valorRTK");
 
+        const residual =
+            numero("residualRTK");
 
- /*
-  ==========================================
-  PREÇO NECESSÁRIO PARA A MARGEM
-  ==========================================
- */
+        const vida =
+            numero("vidaRTK");
 
- var margemPercentual=
-  Math.min(
-   Math.max(
-    n("margem"),
-    0
-   ),
-   90
-  );
+        const horasAno =
+            numero("horasAnoRTK");
 
- var margem=
-  margemPercentual/100;
+        const manut =
+            numero("manutRTK");
 
- var precoNecessario=
+        const horasUso =
+            numero("horasUsoRTK");
 
-  custo/(1-margem);
 
+        if(vida > 0 && horasAno > 0){
 
- /*
-  ==========================================
-  DIVISÃO DE LOTES
-  ==========================================
- */
+            const depreciacaoAno =
+                (valorRTK - residual) / vida;
 
- var tipo=
-  document.getElementById("tipo")
-   ? document.getElementById("tipo").value
-   : "";
+            const depreciacaoHora =
+                depreciacaoAno / horasAno;
 
- var ehDivisao=
-  tipo==="Divisão de lotes";
+            const manutHora =
+                manut / horasAno;
 
- var qtd=0;
+            rtkHora =
+                depreciacaoHora +
+                manutHora;
 
- var valorLote=0;
+            custoRTK =
+                rtkHora *
+                horasUso;
 
- var totalLotes=0;
+        }
 
+    }
 
- if(ehDivisao){
 
-  qtd=
-   Math.max(
-    Math.round(
-     n("qtdLotes")
-    ),
-    1
-   );
+    /* =========================
+       FIXOS
+    ========================== */
 
-  valorLote=
-   Math.max(
-    n("valorLote"),
-    0
-   );
+    const parcelaRTK =
+        numero("parcelaRTK");
 
-  totalLotes=
-   qtd*
-   valorLote;
+    const outrosFixos =
+        numero("outrosFixos");
 
- }
+    const servicosMes =
+        Math.max(1,numero("servicosMes"));
 
+    const rateioFixos =
+        (parcelaRTK + outrosFixos) /
+        servicosMes;
 
- /*
-  ==========================================
-  REGRA DO PREÇO SUGERIDO
-  ==========================================
 
-  Serviço normal:
-      preço sugerido =
-      preço necessário pela margem
+    /* =========================
+       CONSELHO
+    ========================== */
 
-  Divisão de lotes:
-      preço sugerido =
-      quantidade × valor por lote
+    const conselho =
+        numero("conselho");
 
-  Os custos NÃO são adicionados novamente
-  ao preço dos lotes.
 
-  Eles servem para verificar:
-      - custo total
-      - lucro
-      - margem efetiva
-      - se o preço comercial cobre os custos
- */
+    /* =========================
+       CUSTO TOTAL
+    ========================== */
 
- var sug=
-  ehDivisao
-   ? totalLotes
-   : precoNecessario;
+    const custoTotal =
+        custoEquipe +
+        custoCombustivel +
+        custoVeiculo +
+        custoViagem +
+        custoEscritorio +
+        custoRTK +
+        rateioFixos +
+        conselho;
 
 
- /*
-  ==========================================
-  PREÇO MANUAL
-  ==========================================
- */
+    /* =========================
+       MARGEM
+    ========================== */
 
- var manual=
-  n("precoManual");
+    const margemPercentual =
+        numero("margem");
 
+    const margem =
+        margemPercentual / 100;
 
- /*
-  Para divisão de lotes, se o usuário
-  ainda deixou o preço manual padrão
-  de R$1.100, usamos o preço comercial
-  calculado pelos lotes como preço do serviço.
+    let precoMargem = 0;
 
-  Assim, por exemplo:
+    if(margem < 1){
 
-      8 lotes × R$250
-      = R$2.000
+        precoMargem =
+            custoTotal /
+            (1 - margem);
 
-  O resultado passa a mostrar
-  R$2.000 como preço do serviço.
- */
+    }
 
- if(ehDivisao){
 
-  manual=
-   totalLotes;
+    /* =========================
+       PREÇO SUGERIDO
+    ========================== */
 
- }
+    let precoSugerido;
 
+    if(servico === "divisao"){
 
- /*
-  ==========================================
-  LUCRO E MARGEM
-  ==========================================
- */
+        /*
+        REGRA COMERCIAL:
+        R$250 por lote.
 
- var lucro=
-  manual-
-  custo;
+        Os custos não são somados
+        automaticamente ao preço.
 
- var margemEfetiva=
-  manual>0
-   ? (lucro/manual)*100
-   : 0;
+        Eles servem para mostrar
+        quanto sobra de lucro.
+        */
 
+        precoSugerido =
+            precoComercial;
 
- /*
-  ==========================================
-  ATUALIZAÇÃO DA TELA
-  ==========================================
- */
+    }else{
 
- document.getElementById("depH")
-  .textContent=
-  money(dep);
+        precoSugerido =
+            precoMargem;
 
- document.getElementById("ecoH")
-  .textContent=
-  money(eco);
+    }
 
- document.getElementById("sugerido")
-  .textContent=
-  money(sug);
 
- document.getElementById("bottomPrice")
-  .textContent=
-  money(sug);
+    /* =========================
+       PREÇO MANUAL
+    ========================== */
 
+    let precoManual =
+        numero("precoManual");
 
- document.getElementById("rEquipe")
-  .textContent=
-  money(equipe);
+    if(servico === "divisao"){
 
- document.getElementById("rComb")
-  .textContent=
-  money(comb);
+        precoManual =
+            precoComercial;
 
- document.getElementById("rVeic")
-  .textContent=
-  money(veic);
+    }
 
- document.getElementById("rViagem")
-  .textContent=
-  money(viagem);
 
- document.getElementById("rEscritorio")
-  .textContent=
-  money(escr);
+    /* =========================
+       LUCRO
+    ========================== */
 
- document.getElementById("rEquip")
-  .textContent=
-  money(equip);
+    const lucro =
+        precoManual -
+        custoTotal;
 
- document.getElementById("rFixos")
-  .textContent=
-  money(fix);
 
- document.getElementById("rTaxa")
-  .textContent=
-  money(taxa);
+    let margemEfetiva = 0;
 
- document.getElementById("rCusto")
-  .textContent=
-  money(custo);
+    if(precoManual > 0){
 
+        margemEfetiva =
+            (lucro / precoManual) * 100;
 
- document.getElementById("rManual")
-  .textContent=
-  money(manual);
+    }
 
- document.getElementById("rLucro")
-  .textContent=
-  money(lucro);
 
- document.getElementById("rMargem")
-  .textContent=
-  margemEfetiva.toFixed(1)+"%";
+    /* =========================
+       MOSTRAR RESULTADOS
+    ========================== */
 
- document.getElementById("rRtkH")
-  .textContent=
-  money(eco);
+    document.getElementById("precoSugerido").textContent =
+        dinheiro(precoSugerido);
 
+    document.getElementById("precoRodape").textContent =
+        dinheiro(precoSugerido);
 
- /*
-  ==========================================
-  INFORMAÇÕES DA DIVISÃO DE LOTES
-  ==========================================
- */
+    document.getElementById("precoMargem").textContent =
+        dinheiro(precoMargem);
 
- document.getElementById("rBaseMargem")
-  .textContent=
-  money(precoNecessario);
+    document.getElementById("cEquipe").textContent =
+        dinheiro(custoEquipe);
 
+    document.getElementById("cCombustivel").textContent =
+        dinheiro(custoCombustivel);
 
- var rowLotes=
-  document.getElementById("rowLotes");
+    document.getElementById("cVeiculo").textContent =
+        dinheiro(custoVeiculo);
 
- if(ehDivisao){
+    document.getElementById("cViagem").textContent =
+        dinheiro(custoViagem);
 
-  rowLotes.style.display="flex";
+    document.getElementById("cEscritorio").textContent =
+        dinheiro(custoEscritorio);
 
-  document.getElementById("rLotes")
-   .textContent=
-   qtd+
-   " × "+
-   money(valorLote)+
-   " = "+
-   money(totalLotes);
+    document.getElementById("cEquipamentos").textContent =
+        dinheiro(custoRTK);
 
- }else{
+    document.getElementById("cFixos").textContent =
+        dinheiro(rateioFixos);
 
-  rowLotes.style.display="none";
+    document.getElementById("cConselho").textContent =
+        dinheiro(conselho);
 
-  document.getElementById("rLotes")
-   .textContent=
-   money(0);
+    document.getElementById("cTotal").textContent =
+        dinheiro(custoTotal);
 
- }
+    document.getElementById("rManual").textContent =
+        dinheiro(precoManual);
 
+    document.getElementById("rLucro").textContent =
+        dinheiro(lucro);
 
- /*
-  ==========================================
-  AVISO DE RENTABILIDADE
-  ==========================================
- */
+    document.getElementById("rMargem").textContent =
+        margemEfetiva.toFixed(1) + "%";
 
- var b=
-  document.getElementById("badge");
-
-
- if(manual<custo){
-
-  b.textContent=
-   "⚠ PREÇO ABAIXO DO CUSTO";
-
-  b.className=
-   "badge bad";
-
-
- }else if(margemEfetiva<15){
-
-  b.textContent=
-   "⚠ MARGEM APERTADA";
-
-  b.className=
-   "badge warn";
-
-
- }else{
-
-  b.textContent=
-   "✓ MARGEM POSITIVA";
-
-  b.className=
-   "badge ok";
-
- }
+    document.getElementById("rRTK").textContent =
+        dinheiro(rtkHora);
 
 }
 
 
-/*
- ==========================================
- NAVEGAÇÃO
- ==========================================
- */
+/* =========================
+   INICIALIZAÇÃO
+========================= */
 
-function go(page){
+window.addEventListener("load",function(){
 
- document
-  .querySelectorAll(".page")
-  .forEach(function(x){
+    alterarServico();
 
-   x.classList.remove("active");
+    mostrarEquipamentos();
 
-  });
+    atualizarLotes();
 
+    calcular();
 
- document
-  .getElementById(page)
-  .classList.add("active");
-
-
- document
-  .querySelectorAll(".tab")
-  .forEach(function(x){
-
-   x.classList.toggle(
-    "active",
-    x.dataset.page===page
-   );
-
-  });
-
-
- window.scrollTo({
-  top:0,
-  behavior:"smooth"
- });
-
-
- calcular();
-
-}
-
-
-/*
- ==========================================
- BOTÕES DAS ABAS
- ==========================================
- */
-
-document
- .querySelectorAll(".tab")
- .forEach(function(x){
-
-  x.addEventListener(
-   "click",
-   function(){
-
-    go(x.dataset.page);
-
-   }
-  );
-
- });
-
-
-/*
- ==========================================
- INICIALIZAÇÃO
- ==========================================
- */
-
-window.onload=function(){
-
- atualizarLotes();
-
- calcular();
-
-};
+});
 
 </script>
 
-</body>
-</html>
 </body>
 </html>
